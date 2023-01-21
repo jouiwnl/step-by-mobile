@@ -14,7 +14,7 @@ interface ErrorAxios {
 
 export function NewYear() {
 
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation<any>();
 
   const [year, setYear] = useState<string>();
   const [saving, setSaving] = useState<boolean>(false);
@@ -23,7 +23,9 @@ export function NewYear() {
   function save() {
     setSaving(true);
     api.post('/years', { year_number: Number(year) })
-    .then(goBack)
+    .then(() => {
+      navigate('home', { reload: true })
+    })
     .catch(err => {
       setError(err.response.data);
     })

@@ -5,8 +5,8 @@ import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
 
 import { Header } from '../components/Header';
 import { HabitDay, DAY_SIZE } from '../components/HabitDay';
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 import { api } from '../lib/api';
 import dayjs from 'dayjs';
 import { isBissexto } from '../utils/dateUtils';
@@ -26,7 +26,6 @@ interface SummaryRoute {
 
 export function Summary() {
   const { navigate } = useNavigation<any>();
-  const isFocused = useIsFocused();
   const { params } = useRoute();
   const { year } = params as SummaryRoute;
 
@@ -58,11 +57,9 @@ export function Summary() {
     })
   }
 
-  useEffect(() => {
-    if (isFocused) {
+  useFocusEffect(useCallback(() => {
       fetchData();
-    }
-  }, [isFocused])
+  }, []));
 
   return (
     <View className='flex-1 bg-background px-8 pt-16'>

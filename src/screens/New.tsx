@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, ScrollView, TextInput, KeyboardAvoidingView, View } from 'react-native';
 import { BackButton } from '../components/BackButton';
 import { Checkbox } from '../components/Checkbox';
@@ -29,9 +29,9 @@ interface HabitRequest {
 }
 
 export function New() {
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation<any>();
   const { params } = useRoute();
-  const { habit_id, reload } = params as RouteParams;
+  const { habit_id } = params as RouteParams;
 
   const today = dayjs().startOf('day').tz('America/Sao_Paulo');
 
@@ -39,6 +39,11 @@ export function New() {
   const [title, setTitle] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false); 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const routeReload = { 
+    reload: true, 
+    year: today.get('year') 
+  };
 
   function handleWeekDay(index: Number) {
     if (weekDays.includes(index)) {
@@ -76,14 +81,14 @@ export function New() {
       delete habit.created_at;
 
       api.put(`/habits/${habit_id}`, habit)
-        .then(goBack)
+        .then(() => navigate('habits', routeReload))
         .finally(() => setSaving(false));
 
       return;
     }
 
     api.post('/habits', habit)
-      .then(goBack)
+      .then(() => navigate('habits', routeReload))
       .finally(() => setSaving(false));
   }
 

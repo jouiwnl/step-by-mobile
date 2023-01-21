@@ -46,4 +46,35 @@ function generateRangeDatesFromYearStart(year: number) {
   return dateRange
 }
 
-export { isBissexto, generateRangeDatesFromYearStart }
+const week = [
+  {
+    id: 0,
+    description: 'Domingo'
+  },
+  {
+    id: 1,
+    description: 'Segunda-feira'
+  },
+  {
+    id: 2,
+    description: 'Terça-feira'
+  },
+  {
+    id: 3,
+    description: 'Quarta-feira'
+  },
+  {
+    id: 4,
+    description: 'Quinta-feira'
+  },
+  {
+    id: 5,
+    description: 'Sexta-feira'
+  },
+  {
+    id: 6,
+    description: 'Sábado'
+  }
+]
+
+export { isBissexto, generateRangeDatesFromYearStart, week }

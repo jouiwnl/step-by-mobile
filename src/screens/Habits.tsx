@@ -5,24 +5,27 @@ import { api } from '../lib/api';
 
 import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors';
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Loading } from '../components/Loading';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
+import { week } from '../utils/dateUtils';
 
 interface HabitResponse {
 	id: string;
 	title: string;
+  weekdays: string;
 }
 
 interface HabitRoute {
 	year?: number;
+  reload?: boolean;
 }
 
 export function Habits() {
 	const { navigate } = useNavigation<any>();
 	const { params } = useRoute();
-	const { year } = params as HabitRoute;
+	const { year, reload } = params as HabitRoute;
 
 	const currentYear = dayjs().startOf('year').get('year');
 	const isNotCurrentYear = currentYear !== year;
@@ -33,7 +36,7 @@ export function Habits() {
 	function fetchData() {
 		setLoading(true);
 
-		api.get(`/habits/by-year/${year}`).then(response => {
+		api.get<HabitResponse[]>(`/habits/by-year/${year}`).then(response => {
 			setHabits(response.data);
 		})
     .finally(() => setLoading(false))
@@ -47,13 +50,22 @@ export function Habits() {
 	}
 
 	function doDelete(id: string) {
+    setLoading(true);
 		api.delete(`/habits/${id}`)
 			.then(fetchData)
 	}
 
-	useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, [])
+
+	useEffect(() => {
+    if (!reload) {
+      return;
+    }
+
+    fetchData();
+  }, [reload])
 
 	return (
 		<View className="flex-1 bg-background px-8 pt-16">
@@ -101,14 +113,25 @@ export function Habits() {
 								>
 									{habits.map(habit => (
 										<View key={habit.id} 
-											className={clsx("w-full justify-between items-center flex-row py-4 border-b border-zinc-400", {
+											className={clsx("w-full justify-between items-center flex-row py-4", {
 												'opacity-30': isNotCurrentYear
 											})}
 										>
 											<TouchableOpacity disabled={isNotCurrentYear} onPress={() => navigate('new', { habit_id: habit.id })} className="flex-1">
-												<Text className="text-white font-semibold text-xl ml-3">
+												<Text className="text-white font-semibold text-xl">
 													{habit.title}
 												</Text>
+
+                        <View className="flex-row items-center">
+                          {
+                            week.filter(dia => habit.weekdays?.split(',').includes(String(dia.id)))
+                              .map((dia, index, { length }) => (
+                                <Text key={dia.id} className="text-white text-xs font-normal mt-2 opacity-70">
+                                  {dia.description}{  index + 1 === length ? '.' : ', '}
+                                </Text>
+                              ))
+                          }
+                        </View>
 											</TouchableOpacity>
 
 											<TouchableOpacity onPress={() => handleDelete(habit)} className="px-4">

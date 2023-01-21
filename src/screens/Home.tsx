@@ -1,8 +1,8 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons'
 import colors from "tailwindcss/colors";
-import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useCallback, useState, useEffect } from "react";
 import { api } from "../lib/api";
 import { Loading } from "../components/Loading";
 import dayjs from "dayjs";
@@ -15,6 +15,7 @@ interface YearResponse {
 export function Home() {
 
   const { navigate } = useNavigation<any>();
+  const { params }: any = useRoute();
 
   const currentYear = dayjs().startOf('year').get('year');
 
@@ -37,9 +38,17 @@ export function Home() {
     .finally(fetchData)
   }
 
-  useFocusEffect(useCallback(() => {
+  useEffect(() => {
     createYearIfNotExists();
-  }, []))
+  }, [])
+
+  useEffect(() => {
+    if (!params?.reload) {
+      return;
+    }
+
+    fetchData()
+  }, [params?.reload])
 
   return (
     <View className="flex-1 bg-background px-8 pt-16">
@@ -70,7 +79,6 @@ export function Home() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100, paddingTop: 30 }}
       >
-
         {
           loading ? (
             <Loading />
@@ -79,7 +87,7 @@ export function Home() {
               {
                 years.map(year => (
                   <TouchableOpacity 
-                    className="flex-1 flex-row items-center justify-between border-b border-zinc-400 py-3 mb-6"
+                    className="flex-1 flex-row items-center justify-between py-3 mb-6"
                     onPress={() => navigate('summary', { year: year.year_number })}
                     key={year.id}
                   >
