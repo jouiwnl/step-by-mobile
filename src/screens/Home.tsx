@@ -14,30 +14,31 @@ interface YearResponse {
 
 export function Home() {
 
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<any>();
 
   const currentYear = dayjs().startOf('year').get('year');
 
   const [years, setYears] = useState<YearResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function fetchData() {
+  function fetchData() {
     setLoading(true);
-    await api.get('/years').then(response => {
+    api.get('/years').then(response => {
       setYears(response.data);
     })
     .finally(() => setLoading(false));
   }
 
-  async function createYearIfNotExists() {
-    await api.post('/years', { year_number: currentYear })
+  function createYearIfNotExists() {
+    api.post('/years', { year_number: currentYear })
     .catch(err => {
-      console.log(err.response.data)
+      //
     })
+    .finally(fetchData)
   }
 
   useFocusEffect(useCallback(() => {
-    createYearIfNotExists().finally(fetchData);
+    createYearIfNotExists();
   }, []))
 
   return (

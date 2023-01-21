@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { Progressbar } from '../components/Progressbar';
 import { Checkbox } from '../components/Checkbox';
 import { capitalizeFirstLetter } from '../utils/stringUtils';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { api } from '../lib/api';
 import { calculateProgress } from '../utils/mathUtils';
 import { Loading } from '../components/Loading';
@@ -34,19 +34,20 @@ export function Habit() {
   const { setOptions } = useNavigation();
   const { date } = route.params as RouteParams;
 
-  const parsedDate = dayjs(date).add(4, 'hour');
+  const parsedDate = dayjs(date).add(3, 'hour');
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');
 
   const today = dayjs().startOf('day').tz('America/Sao_Paulo')
   const editable = today.isSame(parsedDate, 'day');
 
+  const isFirstRender = useRef(true);
   const [habits, setHabits] = useState<HabitResponse[]>([]); 
   const [progress, setProgress] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
 
-  async function toggleHabit(habit: HabitResponse) {
+  function toggleHabit(habit: HabitResponse) {
     setSaving(true);
 
     const newHabits = habits.map(habito => {
@@ -60,7 +61,7 @@ export function Habit() {
     setHabits(newHabits);
     setProgress(calculateProgress(newHabits.length, newHabits.filter(habito => habito.checked).length))
     
-    await api.patch(`/habits/${habit.id}/toggle`, {
+    api.patch(`/habits/${habit.id}/toggle`, {
       date: parsedDate.toISOString()
     }).finally(() => setSaving(false));
   }

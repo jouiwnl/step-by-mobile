@@ -1,6 +1,7 @@
 import { Text, View, ScrollView } from 'react-native';
+import { useCallback, useRef } from 'react';
 
-import { generateRangeDatesFromYearStart } from '../utils/generate-range-between-dates';
+import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
 
 import { Header } from '../components/Header';
 import { HabitDay, DAY_SIZE } from '../components/HabitDay';
@@ -24,16 +25,16 @@ interface SummaryRoute {
 }
 
 export function Summary() {
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<any>();
   const isFocused = useIsFocused();
   const { params } = useRoute();
   const { year } = params as SummaryRoute;
 
-  const datesFromYearStart = generateRangeDatesFromYearStart(year);
-  const minimunSummaryDatesSizes = isBissexto(year) ? 366 : 365;
-  const amountOfDaysToFill = minimunSummaryDatesSizes - datesFromYearStart.length;
-
   const [weekDaysHabits, setWeekDaysHabits] = useState<WeekDaysHabitsResponse[]>([]);
+  const [datesFromYearStart, setDatesFromYearStart] = useState<any[]>([]);
+  const [amountOfDaysToFill, setAmountOfDaysToFill] = useState<number>(0);
+
+  const minimunSummaryDatesSizes = isBissexto(year) ? 366 : 365;
 
   function defineHabitdayParams(weekDay: WeekDaysHabitsResponse) {
     const amount = weekDay.amount ?? 0;
@@ -46,10 +47,15 @@ export function Summary() {
     }
   }
 
-  async function fetchData() {
-    await api.get(`/summary/${year}`).then(response => {
+  function fetchData() {
+    const fromYearStart = generateRangeDatesFromYearStart(year);
+
+    setDatesFromYearStart(fromYearStart);
+    setAmountOfDaysToFill(minimunSummaryDatesSizes - fromYearStart.length)
+
+    api.get(`/summary/${year}`).then(response => {
       setWeekDaysHabits(response.data);
-    });
+    })
   }
 
   useEffect(() => {
@@ -92,10 +98,10 @@ export function Summary() {
 
               return (
                 <HabitDay 
-                  key={date.date.toISOString()} 
+                  key={date.date} 
                   amount={dayHabit?.amount ?? 0}
                   completed={dayHabit?.completed ?? 0}
-                  date={date.date.toISOString()}
+                  date={date.date}
                   disabled={date.disabled}
                   onPress={() => navigate('habit', defineHabitdayParams(dayHabit ?? date))}
                 />

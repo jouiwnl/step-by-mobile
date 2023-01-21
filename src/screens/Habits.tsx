@@ -1,11 +1,11 @@
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { BackButton } from '../components/BackButton';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 
 import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { Loading } from '../components/Loading';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
@@ -20,7 +20,7 @@ interface HabitRoute {
 }
 
 export function Habits() {
-	const { navigate } = useNavigation();
+	const { navigate } = useNavigation<any>();
 	const { params } = useRoute();
 	const { year } = params as HabitRoute;
 
@@ -30,30 +30,30 @@ export function Habits() {
 	const [habits, setHabits] = useState<HabitResponse[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
-	async function fetchData() {
+	function fetchData() {
 		setLoading(true);
 
-		await api.get(`/habits/by-year/${year}`).then(response => {
+		api.get(`/habits/by-year/${year}`).then(response => {
 			setHabits(response.data);
 		})
-			.finally(() => setLoading(false))
+    .finally(() => setLoading(false))
 	}
 
-	async function handleDelete(habit: HabitResponse) {
+	function handleDelete(habit: HabitResponse) {
 		Alert.alert("Hábito", `Deseja parar de ${habit.title}?`, [
 			{ text: 'Confirmar', onPress: () => doDelete(habit.id) },
 			{ text: 'Cancelar', onPress: () => { } }
 		])
 	}
 
-	async function doDelete(id: string) {
-		await api.delete(`/habits/${id}`)
+	function doDelete(id: string) {
+		api.delete(`/habits/${id}`)
 			.then(fetchData)
 	}
 
-	useFocusEffect(useCallback(() => {
-		fetchData();
-	}, []))
+	useEffect(() => {
+    fetchData();
+  }, [])
 
 	return (
 		<View className="flex-1 bg-background px-8 pt-16">

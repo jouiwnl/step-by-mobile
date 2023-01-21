@@ -20,7 +20,7 @@ export function NewYear() {
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<ErrorAxios>();
 
-  async function save() {
+  function save() {
     setSaving(true);
     api.post('/years', { year_number: Number(year) })
     .then(goBack)

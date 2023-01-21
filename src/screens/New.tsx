@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Text, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, View } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { Text, ScrollView, TextInput, KeyboardAvoidingView, View } from 'react-native';
 import { BackButton } from '../components/BackButton';
 import { Checkbox } from '../components/Checkbox';
-import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors';
-import clsx from 'clsx';
 import { api } from '../lib/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
@@ -36,7 +34,7 @@ export function New() {
   const { habit_id, reload } = params as RouteParams;
 
   const today = dayjs().startOf('day').tz('America/Sao_Paulo');
-  
+
   const [weekDays, setWeekDays] = useState<Number[]>([]);
   const [title, setTitle] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false); 
@@ -50,10 +48,10 @@ export function New() {
     } 
   }
 
-  async function loadHabit() {
+  function loadHabit() {
     setLoading(true);
 
-    await api.get<HabitResponse>(`/habits/${habit_id}`).then(response => {
+    api.get<HabitResponse>(`/habits/${habit_id}`).then(response => {
       setWeekDays(() => {
         return response.data.weekDays.map(weekDay => {
           return weekDay.week_day
@@ -65,7 +63,7 @@ export function New() {
     .finally(() => setLoading(false))
   }
 
-  async function save() {
+  function save() {
     setSaving(true);
 
     const habit: HabitRequest = {
@@ -77,16 +75,16 @@ export function New() {
     if (habit_id) {
       delete habit.created_at;
 
-      await api.put(`/habits/${habit_id}`, habit)
-      .then(goBack)
-      .finally(() => setSaving(false));
+      api.put(`/habits/${habit_id}`, habit)
+        .then(goBack)
+        .finally(() => setSaving(false));
 
       return;
     }
 
-    await api.post('/habits', habit)
-    .then(goBack)
-    .finally(() => setSaving(false));
+    api.post('/habits', habit)
+      .then(goBack)
+      .finally(() => setSaving(false));
   }
 
   useEffect(() => {

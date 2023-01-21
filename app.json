@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "step-by-mobile",
-    "slug": "step-by-mobile",
+    "name": "StepBy",
+    "slug": "step-by",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#09090A"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -18,16 +18,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jouiwnl.step-by"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#09090A"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cb99a005-1c42-4782-86d1-5ea9d0cb2dd0"
+      }
     }
   }
 }

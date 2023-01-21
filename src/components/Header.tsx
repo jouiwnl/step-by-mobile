@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import colors from 'tailwindcss/colors';
 
-import { Logo } from '../assets/Logo';
+import { Subtitle } from '../assets/Subtitle';
 import { useNavigation } from "@react-navigation/native";
 
 interface HeaderProps {
@@ -15,8 +15,10 @@ export function Header(props: HeaderProps) {
 
   return (
     <View className="w-full flex-row items-center justify-between">
-      <Logo />
-      
+      <View className="w-2">
+        <Subtitle />
+      </View>
+
       <View className="flex-row items-center">
         <TouchableOpacity 
           activeOpacity={0.7}

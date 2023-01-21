@@ -6,9 +6,14 @@ import { Habits } from '../screens/Habits';
 import { Home } from '../screens/Home';
 import { NewYear } from '../screens/NewYear';
 
+import { enableScreens } from 'react-native-screens';
+
 const { Screen, Navigator } = createNativeStackNavigator();
 
 export function AppRoutes() {
+
+  enableScreens();
+
 	return (
 		<Navigator
 			screenOptions={{

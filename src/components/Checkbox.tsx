@@ -2,6 +2,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons'
 import colors from "tailwindcss/colors";
 import clsx from "clsx";
+import Animated, { RotateInDownLeft, RotateInDownRight } from "react-native-reanimated";
+
 
 interface props {
 	checked?: boolean;
@@ -19,13 +21,17 @@ export function Checkbox({ checked = false, title, onPress, disabled }: props) {
 			disabled={disabled}
 		>
 			{checked ? (
-				<View className="h-8 w-8 bg-blue-500 rounded-lg items-center justify-center">
+				<Animated.View 
+          className="h-8 w-8 bg-blue-500 rounded-lg items-center justify-center"
+          entering={RotateInDownLeft}
+          exiting={RotateInDownLeft}
+        >
 					<Feather
 						name="check"
 						size={20}
 						color={colors.white}
 					/>
-				</View>
+				</Animated.View>
 			) : (
 				<View className={clsx("w-8 h-8 bg-zinc-900 rounded-lg", {
 					'bg-zinc-500': disabled

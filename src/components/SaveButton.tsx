@@ -6,7 +6,7 @@ import { Loading } from "./Loading";
 import { Feather } from '@expo/vector-icons';
 
 interface SaveButtonProps {
-  save: () => Promise<void>;
+  save: () => void;
   saving: boolean;
   title?: string;
 }
