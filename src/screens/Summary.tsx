@@ -1,5 +1,5 @@
 import { Text, View, ScrollView } from 'react-native';
-import { useCallback, useRef } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 
 import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
 
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { api } from '../lib/api';
 import dayjs from 'dayjs';
 import { isBissexto } from '../utils/dateUtils';
+import { AuthContext } from '../contexts/Auth';
 
 const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
@@ -28,6 +29,8 @@ export function Summary() {
   const { navigate } = useNavigation<any>();
   const { params } = useRoute();
   const { year } = params as SummaryRoute;
+
+  const { user } = useContext(AuthContext);
 
   const [weekDaysHabits, setWeekDaysHabits] = useState<WeekDaysHabitsResponse[]>([]);
   const [datesFromYearStart, setDatesFromYearStart] = useState<any[]>([]);
@@ -52,13 +55,13 @@ export function Summary() {
     setDatesFromYearStart(fromYearStart);
     setAmountOfDaysToFill(minimunSummaryDatesSizes - fromYearStart.length)
 
-    api.get(`/summary/${year}`).then(response => {
+    api.get(`/summary?year=${year}&user_id=${user?.id}`).then(response => {
       setWeekDaysHabits(response.data);
     })
   }
 
   useFocusEffect(useCallback(() => {
-      fetchData();
+    fetchData();
   }, []));
 
   return (

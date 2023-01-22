@@ -8,17 +8,19 @@ import { Feather } from '@expo/vector-icons';
 interface SaveButtonProps {
   save: () => void;
   saving: boolean;
-  title?: string;
+  isDisabled: boolean;
+  text?: string;
+  height?: number;
 }
 
-export function SaveButton({ title, save, saving }: SaveButtonProps) {
+export function SaveButton({ isDisabled, save, saving, text, height }: SaveButtonProps) {
   return (
     <TouchableOpacity 
       activeOpacity={0.7}
-      className={clsx("mt-6 w-full h-14 flex-row items-center justify-center bg-blue-600 rounded-md", {
-        'opacity-30': !title
+      className={clsx(`mt-6 w-full h-14 flex-row items-center justify-center bg-blue-600 rounded-md ${height && `h-${height}`}`, {
+        'opacity-30': isDisabled
       })}
-      disabled={!title?.length}
+      disabled={isDisabled}
       onPress={save}
     >
       {
@@ -33,7 +35,7 @@ export function SaveButton({ title, save, saving }: SaveButtonProps) {
             />
 
             <Text className="font-semibold text-base text-white ml-2">
-              Confirmar
+              {text ?? 'Confirmar'}
             </Text>
           </>
         )

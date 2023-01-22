@@ -6,24 +6,37 @@ import { Habits } from '../screens/Habits';
 import { Home } from '../screens/Home';
 import { NewYear } from '../screens/NewYear';
 
-import { enableScreens } from 'react-native-screens';
+import Login from '../screens/Login';
+import Register from '../screens/Register';
+import { auth } from '../../firebase';
 
 const { Screen, Navigator } = createNativeStackNavigator();
 
 export function AppRoutes() {
-
-  enableScreens();
-
 	return (
 		<Navigator
 			screenOptions={{
 				headerShown: false,
 				freezeOnBlur: true
 			}}
+      initialRouteName={auth.currentUser ? 'home' : 'login'}
 		>
+      <Screen
+        name='login'
+        component={Login}
+      />
+
+      <Screen
+        name='register'
+        component={Register}
+      />
+
 			<Screen
 				name='home'
 				component={Home}
+        options={{
+          gestureEnabled: false
+        }}
 			/>
 
 			<Screen

@@ -1,6 +1,6 @@
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { BackButton } from '../components/BackButton';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { api } from '../lib/api';
 
 import { Feather } from '@expo/vector-icons'
@@ -10,6 +10,7 @@ import { Loading } from '../components/Loading';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 import { week } from '../utils/dateUtils';
+import { AuthContext } from '../contexts/Auth';
 
 interface HabitResponse {
 	id: string;
@@ -30,13 +31,15 @@ export function Habits() {
 	const currentYear = dayjs().startOf('year').get('year');
 	const isNotCurrentYear = currentYear !== year;
 
+  const { user } = useContext(AuthContext);
+
 	const [habits, setHabits] = useState<HabitResponse[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	function fetchData() {
 		setLoading(true);
 
-		api.get<HabitResponse[]>(`/habits/by-year/${year}`).then(response => {
+		api.get<HabitResponse[]>(`/habits?year=${year}&user_id=${user?.id}`).then(response => {
 			setHabits(response.data);
 		})
     .finally(() => setLoading(false))

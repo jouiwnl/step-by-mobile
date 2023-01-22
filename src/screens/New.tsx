@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Text, ScrollView, TextInput, KeyboardAvoidingView, View } from 'react-native';
+import { useEffect, useState, useContext } from 'react';
+import { Text, ScrollView, KeyboardAvoidingView, View, Platform } from 'react-native';
 import { BackButton } from '../components/BackButton';
 import { Checkbox } from '../components/Checkbox';
-import colors from 'tailwindcss/colors';
 import { api } from '../lib/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { Loading } from '../components/Loading';
 import { SaveButton } from '../components/SaveButton';
+import Input from '../components/Input';
+import { AuthContext } from '../contexts/Auth';
 
 const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
+const isAndroid = Platform.OS === 'android';
 
 interface RouteParams {
   habit_id?: string; 
@@ -26,6 +28,7 @@ interface HabitRequest {
   title: string;
   weekDays: Number[];
   created_at?: string;
+  user_id?: string;
 }
 
 export function New() {
@@ -34,6 +37,8 @@ export function New() {
   const { habit_id } = params as RouteParams;
 
   const today = dayjs().startOf('day').tz('America/Sao_Paulo');
+
+  const { user } = useContext(AuthContext)
 
   const [weekDays, setWeekDays] = useState<Number[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -74,7 +79,8 @@ export function New() {
     const habit: HabitRequest = {
       title,
       weekDays,
-      created_at: today.toISOString()
+      created_at: today.toISOString(),
+      user_id: user?.id
     }
 
     if (habit_id) {
@@ -99,7 +105,7 @@ export function New() {
   }, [])
 
   return (
-    <KeyboardAvoidingView behavior='padding' className="flex-1 bg-background px-8 pt-16">
+    <KeyboardAvoidingView behavior={isAndroid ? 'height' : 'padding'} className="flex-1 bg-background px-8 pt-16">
       <View className="w-full items-center justify-start flex-row">
         {
           saving ? (
@@ -129,12 +135,10 @@ export function New() {
                 Qual seu comprometimento?
               </Text>
 
-              <TextInput 
-                className="h-12 pl-4 rounded-lg mt-3 bg-zinc-80 text-white border-2 border-zinc-400 focus:border-blue-600"
-                placeholder='Exercícios, Dormir bem e etc...'
-                placeholderTextColor={colors.zinc[400]}
-                onChangeText={setTitle}
-                value={title}
+              <Input 
+                placeholder='Exercícios, Dormir bem, etc...'
+                setText={setTitle}
+                text={title}
               />
 
               <Text className="font-semibold mt-4 mb-3 text-white text-base">
@@ -156,7 +160,7 @@ export function New() {
               <SaveButton 
                 save={save}
                 saving={saving}
-                title={title}
+                isDisabled={!title}
               />
             </>
           )

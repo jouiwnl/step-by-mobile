@@ -1,11 +1,13 @@
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Feather } from '@expo/vector-icons'
 import colors from "tailwindcss/colors";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useCallback, useState, useEffect } from "react";
+import dayjs from "dayjs";
+
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Feather } from '@expo/vector-icons';
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { api } from "../lib/api";
 import { Loading } from "../components/Loading";
-import dayjs from "dayjs";
+import { AuthContext } from "../contexts/Auth";
 
 interface YearResponse {
   id: string;
@@ -14,41 +16,62 @@ interface YearResponse {
 
 export function Home() {
 
-  const { navigate } = useNavigation<any>();
+  const navigation = useNavigation<any>();
+  const { navigate } = navigation;
   const { params }: any = useRoute();
 
   const currentYear = dayjs().startOf('year').get('year');
+
+  const { signOutNow, user } = useContext(AuthContext);
 
   const [years, setYears] = useState<YearResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   function fetchData() {
     setLoading(true);
-    api.get('/years').then(response => {
+
+    api.get(`/years?user_id=${user?.id}`).then(response => {
       setYears(response.data);
     })
     .finally(() => setLoading(false));
   }
 
   function createYearIfNotExists() {
-    api.post('/years', { year_number: currentYear })
+    api.post('/years', { year_number: currentYear, user_id: user?.id })
     .catch(err => {
       //
     })
     .finally(fetchData)
   }
 
-  useEffect(() => {
-    createYearIfNotExists();
-  }, [])
+  function handleSignOut() {
+    signOutNow?.().then(() => {
+      navigate('login')
+    })
+  }
 
   useEffect(() => {
+    navigation.addListener('beforeRemove', (e: any) => {
+      e.preventDefault();
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    if (user?.id) {
+      createYearIfNotExists();
+    }
+  }, [user])
+
+  useFocusEffect(useCallback(() => {
+    console.log(params)
     if (!params?.reload) {
       return;
     }
 
+    params.reload = false;
+
     fetchData()
-  }, [params?.reload])
+  }, [params?.reload]))
 
   return (
     <View className="flex-1 bg-background px-8 pt-16">
@@ -58,21 +81,35 @@ export function Home() {
           Anos
         </Text>
 
-        <TouchableOpacity 
-					activeOpacity={0.7}
-					className="flex-row h-11 px-4 border border-blue-500 rounded-lg items-center mr-2" 
-					onPress={() => navigate('newyear')}
-				>
-					<Feather 
-						name="plus"
-						color={colors.blue[500]}
-						size={20}
-					/>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity 
+            activeOpacity={0.7}
+            className="flex-row h-11 px-4 border border-blue-500 rounded-lg items-center" 
+            onPress={() => navigate('newyear')}
+          >
+            <Feather 
+              name="plus"
+              color={colors.blue[500]}
+              size={20}
+            />
 
-					<Text className="text-white ml-3 font-semibold text-base">
-						Novo
-					</Text>
-				</TouchableOpacity>
+            <Text className="text-white ml-3 font-semibold text-base">
+              Novo
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            activeOpacity={0.7}
+            className="flex-row h-11 px-4 items-center" 
+            onPress={handleSignOut}
+          >
+            <Feather 
+              name="log-out"
+              color={colors.zinc[500]}
+              size={20}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView

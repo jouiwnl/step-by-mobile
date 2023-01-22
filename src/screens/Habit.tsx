@@ -5,10 +5,11 @@ import dayjs from 'dayjs';
 import { Progressbar } from '../components/Progressbar';
 import { Checkbox } from '../components/Checkbox';
 import { capitalizeFirstLetter } from '../utils/stringUtils';
-import { useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { calculateProgress } from '../utils/mathUtils';
 import { Loading } from '../components/Loading';
+import { AuthContext } from '../contexts/Auth';
 
 interface RouteParams {
   date: string;
@@ -41,7 +42,8 @@ export function Habit() {
   const today = dayjs().startOf('day').tz('America/Sao_Paulo')
   const editable = today.isSame(parsedDate, 'day');
 
-  const isFirstRender = useRef(true);
+  const { user } = useContext(AuthContext);
+
   const [habits, setHabits] = useState<HabitResponse[]>([]); 
   const [progress, setProgress] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -62,7 +64,8 @@ export function Habit() {
     setProgress(calculateProgress(newHabits.length, newHabits.filter(habito => habito.checked).length))
     
     api.patch(`/habits/${habit.id}/toggle`, {
-      date: parsedDate.toISOString()
+      date: parsedDate.toISOString(),
+      user_id: user?.id
     }).finally(() => setSaving(false));
   }
 
@@ -71,7 +74,7 @@ export function Habit() {
       setLoading(true);
     }
 
-    api.get<DayResponse>(`/day?date=${parsedDate.toISOString()}`).then(response => {
+    api.get<DayResponse>(`/day?date=${parsedDate.toISOString()}&user_id=${user?.id}`).then(response => {
       const habits = response.data.possibleHabits;
       const completed = response.data.completedHabits ?? [];
 
@@ -103,7 +106,6 @@ export function Habit() {
 
   return (
     <View className="flex-1 bg-background px-8 pt-16">
-
       <View className="w-full items-center justify-start flex-row">
         {
           saving ? (

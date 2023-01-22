@@ -1,15 +1,18 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export function Subtitle(props) {
+interface SubtitleProps {
+  width?: number;
+  height?: number;
+}
+
+export function Subtitle({ height, width }: SubtitleProps) {
   return (
     <Svg
-      width={116}
-      height={16}
+      width={width ?? 116}
+      height={height ?? 32}
       viewBox="0 0 116 16"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
     >
       <Path
         d="M12 0.5H4C2.067 0.5 0.5 2.067 0.5 4V12C0.5 13.933 2.067 15.5 4 15.5H12C13.933 15.5 15.5 13.933 15.5 12V4C15.5 2.067 13.933 0.5 12 0.5Z"
