@@ -2,7 +2,7 @@
   "expo": {
     "name": "StepBy",
     "slug": "step-by-mobile",
-    "version": "1.1.1",
+    "version": "1.1.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#09090A"
-      }
+      },
+      "package": "com.jouiwnl.stepbymobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

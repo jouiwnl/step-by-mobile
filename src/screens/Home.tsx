@@ -8,6 +8,7 @@ import { useState, useEffect, useContext, useCallback } from "react";
 import { api } from "../lib/api";
 import { Loading } from "../components/Loading";
 import { AuthContext } from "../contexts/Auth";
+import { registerForPushNotification } from "../notification/notification";
 
 interface YearResponse {
   id: string;
@@ -32,6 +33,21 @@ export function Home() {
 
     api.get(`/years?user_id=${user?.id}`).then(response => {
       setYears(response.data);
+    })
+    .then(() => {
+      registerForPushNotification().then(token => {
+        if (!token) {
+          return;
+        }
+
+        api.get(`/token?token=${token}`).then(response => {
+          const findedToken = response.data;
+
+          if (!findedToken) {
+            api.post('/token', { token: token, user_id: user?.id });
+          }
+        })
+      })
     })
     .finally(() => setLoading(false));
   }
@@ -63,7 +79,6 @@ export function Home() {
   }, [user])
 
   useFocusEffect(useCallback(() => {
-    console.log(params)
     if (!params?.reload) {
       return;
     }

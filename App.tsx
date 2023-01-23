@@ -17,7 +17,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from './src/contexts/Auth';
 import { auth } from './firebase';
-import { User } from 'firebase/auth'
+import { User } from 'firebase/auth';
 
 export default function App() {
   const [user, setUser] = useState<User | null>();
