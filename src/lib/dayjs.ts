@@ -6,3 +6,5 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.locale('pt-br');
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+export { dayjs }

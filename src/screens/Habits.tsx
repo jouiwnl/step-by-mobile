@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Loading } from '../components/Loading';
-import dayjs from 'dayjs';
+import { dayjs } from '../lib/dayjs';
 import clsx from 'clsx';
 import { week } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
@@ -28,7 +28,7 @@ export function Habits() {
 	const { params } = useRoute();
 	const { year, reload } = params as HabitRoute;
 
-	const currentYear = dayjs().startOf('year').get('year');
+	const currentYear = dayjs().startOf('year').tz('America/Sao_paulo', true).get('year');
 	const isNotCurrentYear = currentYear !== year;
 
   const { user } = useContext(AuthContext);
@@ -125,7 +125,7 @@ export function Habits() {
 													{habit.title}
 												</Text>
 
-                        <View className="flex-row items-center">
+                        <View className="flex-row items-center flex-wrap">
                           {
                             week.filter(dia => habit.weekdays?.split(',').includes(String(dia.id)))
                               .map((dia, index, { length }) => (

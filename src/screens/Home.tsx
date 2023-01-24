@@ -1,5 +1,5 @@
 import colors from "tailwindcss/colors";
-import dayjs from "dayjs";
+import { dayjs } from "../lib/dayjs";
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons';
@@ -21,7 +21,7 @@ export function Home() {
   const { navigate } = navigation;
   const { params }: any = useRoute();
 
-  const currentYear = dayjs().startOf('year').get('year');
+  const currentYear = dayjs().startOf('year').tz('America/Sao_Paulo', true).get('year');
 
   const { signOutNow, user } = useContext(AuthContext);
 

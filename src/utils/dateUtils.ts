@@ -1,14 +1,17 @@
-import dayjs from 'dayjs';
+import { dayjs } from '../lib/dayjs';
+import _ from 'lodash';
 
 function isBissexto(year: number) {
   return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
 }
 
 function generateRangeDatesFromYearStart(year: number) {
-  const startDate = dayjs().year(year).startOf('year').tz('America/Sao_Paulo')
+  const startDate = dayjs().year(year).tz('America/Sao_Paulo', true).startOf('year');
   const currentYear = dayjs().startOf('year').get('year');
   const isSameYear = currentYear === year;
-  const endDate = isSameYear ? dayjs().year(year).tz('America/Sao_Paulo').toDate() : dayjs().year(year).endOf('year').tz('America/Sao_Paulo').toDate();
+  const endDate = isSameYear 
+    ? dayjs().year(year).tz('America/Sao_Paulo', true).toDate() 
+    : dayjs().year(year).tz('America/Sao_Paulo', true).endOf('year').toDate();
 
   let dateRange = []
   let compareDate = startDate
@@ -74,6 +77,57 @@ const week = [
   {
     id: 6,
     description: 'Sábado'
+  }
+]
+
+const months = [
+  {
+    id: 0,
+    description: 'Janeiro'
+  },
+  {
+    id: 1,
+    description: 'Fevereiro'
+  },
+  {
+    id: 2,
+    description: 'Março'
+  },
+  {
+    id: 3,
+    description: 'Abril'
+  },
+  {
+    id: 4,
+    description: 'Maio'
+  },
+  {
+    id: 5,
+    description: 'Junho'
+  },
+  {
+    id: 6,
+    description: 'Julho'
+  },
+  {
+    id: 7,
+    description: 'Agosto'
+  },
+  {
+    id: 8,
+    description: 'Setembro'
+  },
+  {
+    id: 9,
+    description: 'Outubro'
+  },
+  {
+    id: 10,
+    description: 'Novembro'
+  },
+  {
+    id: 11,
+    description: 'Dezembro'
   }
 ]
 

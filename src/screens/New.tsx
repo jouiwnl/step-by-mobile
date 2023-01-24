@@ -4,7 +4,7 @@ import { BackButton } from '../components/BackButton';
 import { Checkbox } from '../components/Checkbox';
 import { api } from '../lib/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import dayjs from 'dayjs';
+import { dayjs } from '../lib/dayjs';
 import { Loading } from '../components/Loading';
 import { SaveButton } from '../components/SaveButton';
 import Input from '../components/Input';
@@ -36,7 +36,7 @@ export function New() {
   const { params } = useRoute();
   const { habit_id } = params as RouteParams;
 
-  const today = dayjs().startOf('day').tz('America/Sao_Paulo');
+  const today = dayjs().startOf('day').tz('America/Sao_Paulo', true);
 
   const { user } = useContext(AuthContext)
 

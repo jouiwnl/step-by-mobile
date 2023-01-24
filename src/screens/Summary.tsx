@@ -1,5 +1,5 @@
 import { Text, View, ScrollView } from 'react-native';
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext } from 'react';
 
 import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
 
@@ -8,9 +8,11 @@ import { HabitDay, DAY_SIZE } from '../components/HabitDay';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useState } from 'react';
 import { api } from '../lib/api';
-import dayjs from 'dayjs';
+import { dayjs } from '../lib/dayjs';
 import { isBissexto } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
+
+import _ from 'lodash';
 
 const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
@@ -90,8 +92,8 @@ export function Summary() {
           {
             datesFromYearStart.map(date => {
               const dayHabit = weekDaysHabits.find(dia => {
-                const parsed = dayjs(dia.date).add(4, 'hour').startOf('day');
-                const dateParsed = dayjs(date.date).startOf('days');
+                const parsed = dayjs.utc(dia.date).tz('America/Sao_Paulo', true).startOf('day');
+                const dateParsed = dayjs.utc(date.date).tz('America/Sao_Paulo', true).startOf('day');
 
                 return dayjs(dateParsed).isSame(parsed);
               })
@@ -112,13 +114,15 @@ export function Summary() {
           {
             amountOfDaysToFill > 0 && Array
             .from({ length: amountOfDaysToFill })
-            .map((_, index) => (
-              <View 
-                key={index}
-                className="bg-zinc-900 rounded-lg border-2 m-1 border-zinc-800 opacity-40"
-                style={{ width: DAY_SIZE, height: DAY_SIZE }}
-              />
-            ))
+            .map((__, index) => {
+              return (
+                <View 
+                  key={index}
+                  className="bg-zinc-900 rounded-lg border-2 m-1 border-zinc-800 opacity-40"
+                  style={{ width: DAY_SIZE, height: DAY_SIZE }}
+                />
+              )
+            })
           }
         </View>
       </ScrollView>

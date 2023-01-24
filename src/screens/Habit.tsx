@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Text, View, ScrollView } from 'react-native';
 import { BackButton } from '../components/BackButton';
-import dayjs from 'dayjs';
+import { dayjs } from '../lib/dayjs';
 import { Progressbar } from '../components/Progressbar';
 import { Checkbox } from '../components/Checkbox';
 import { capitalizeFirstLetter } from '../utils/stringUtils';
@@ -35,11 +35,11 @@ export function Habit() {
   const { setOptions } = useNavigation();
   const { date } = route.params as RouteParams;
 
-  const parsedDate = dayjs(date).add(3, 'hour');
+  const parsedDate = dayjs.utc(date).tz('America/Sao_Paulo', true);
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');
 
-  const today = dayjs().startOf('day').tz('America/Sao_Paulo')
+  const today = dayjs().startOf('day').tz('America/Sao_Paulo', true)
   const editable = today.isSame(parsedDate, 'day');
 
   const { user } = useContext(AuthContext);
