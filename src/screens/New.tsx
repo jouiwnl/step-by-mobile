@@ -4,13 +4,14 @@ import { BackButton } from '../components/BackButton';
 import { Checkbox } from '../components/Checkbox';
 import { api } from '../lib/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { dayjs } from '../lib/dayjs';
 import { Loading } from '../components/Loading';
 import { SaveButton } from '../components/SaveButton';
 import Input from '../components/Input';
 import { AuthContext } from '../contexts/Auth';
+import { week } from '../utils/dateUtils';
 
-const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
+import moment from 'moment-timezone';
+
 const isAndroid = Platform.OS === 'android';
 
 interface RouteParams {
@@ -36,7 +37,8 @@ export function New() {
   const { params } = useRoute();
   const { habit_id } = params as RouteParams;
 
-  const today = dayjs().startOf('day').tz('America/Sao_Paulo', true);
+  const today = moment().format('YYYY-MM-DD');
+  const year = moment().year();
 
   const { user } = useContext(AuthContext)
 
@@ -47,7 +49,7 @@ export function New() {
 
   const routeReload = { 
     reload: true, 
-    year: today.get('year') 
+    year: year
   };
 
   function handleWeekDay(index: Number) {
@@ -79,7 +81,7 @@ export function New() {
     const habit: HabitRequest = {
       title,
       weekDays,
-      created_at: today.toISOString(),
+      created_at: today + "T03:00:00.000z",
       user_id: user?.id
     }
 
@@ -128,15 +130,15 @@ export function New() {
           ) : (
             <>
               <Text className="mt-6 text-white font-extrabold text-3xl">
-                {habit_id ? 'Editar' : 'Criar'} hábito
+                {habit_id ? 'Edit' : 'Create'} habit
               </Text>
 
               <Text className="mt-6 text-white font-semibold text-base">
-                Qual seu comprometimento?
+                What is your length?
               </Text>
 
               <Input 
-                placeholder='Exercícios, Dormir bem, etc...'
+                placeholder='Exercises, sleep well, and more...'
                 setText={setTitle}
                 text={title}
               />
@@ -145,11 +147,11 @@ export function New() {
                 Qual a recorrência?
               </Text>
 
-              {dias.map((day, index) => {
+              {week.map((day, index) => {
                 return (
                   <Checkbox 
                     key={index}
-                    title={day}
+                    title={day.description}
                     checked={weekDays.includes(index)}
                     onPress={() => handleWeekDay(index)}
                     disabled={false}

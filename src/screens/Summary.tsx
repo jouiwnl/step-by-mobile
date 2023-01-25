@@ -8,13 +8,14 @@ import { HabitDay, DAY_SIZE } from '../components/HabitDay';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useState } from 'react';
 import { api } from '../lib/api';
-import { dayjs } from '../lib/dayjs';
 import { isBissexto } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
 
+import moment from 'moment-timezone';
+
 import _ from 'lodash';
 
-const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 interface WeekDaysHabitsResponse {
   id: string;
@@ -45,7 +46,7 @@ export function Summary() {
     const completed = weekDay.completed ?? 0;
 
     return { 
-      date: dayjs(weekDay.date).toISOString(),
+      date: moment(weekDay.date).toISOString(),
       amount,
       completed
     }
@@ -92,10 +93,10 @@ export function Summary() {
           {
             datesFromYearStart.map(date => {
               const dayHabit = weekDaysHabits.find(dia => {
-                const parsed = dayjs.utc(dia.date).tz('America/Sao_Paulo', true).startOf('day');
-                const dateParsed = dayjs.utc(date.date).tz('America/Sao_Paulo', true).startOf('day');
+                const parsed = moment(dia.date).utcOffset(-3).format('YYYYMMDD');
+                const dateParsed = moment(date.date).utcOffset(-3).format('YYYYMMDD');
 
-                return dayjs(dateParsed).isSame(parsed);
+                return parsed === dateParsed;
               })
 
               return (

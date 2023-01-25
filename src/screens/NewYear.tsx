@@ -40,11 +40,11 @@ export function NewYear() {
       <BackButton />
 
       <Text className="mt-6 text-white font-extrabold text-3xl">
-        Novo ano
+        New year
       </Text>
 
       <Text className="mt-6 text-white font-semibold text-base">
-        Qual o ano?
+        What year?
       </Text>
 
       <TextInput 

@@ -4,8 +4,6 @@ import * as Permissions from 'expo-permissions';
 async function registerForPushNotification() {
   const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
 
-  console.log(status);
-
   if (status !== 'granted') {
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 

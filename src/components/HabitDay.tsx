@@ -1,6 +1,6 @@
 import { Dimensions, TouchableOpacity } from "react-native";
 import clsx from 'clsx';
-import { dayjs } from "../lib/dayjs";
+import moment from 'moment';
 
 const WEEK_DAYS = 7;
 const SCREEN_HORIZONTAL_PADDING = (32 * 2) / 5;
@@ -19,8 +19,8 @@ interface props {
 export function HabitDay(props: props) {
 
   const progress = Math.round((props.completed/props.amount) * 100);
-  const today = dayjs().startOf('day').tz('America/Sao_Paulo', true)
-  const isCurrentDay = dayjs(props.date).isSame(today);
+  const today = moment().startOf('D');
+  const isCurrentDay = moment(props.date).startOf('D').isSame(today);
 
   return (
     <TouchableOpacity 

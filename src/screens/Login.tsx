@@ -23,7 +23,7 @@ export default function Login() {
 
   function handleEmail(text: string) {
     if (!isValidEmail(text)) {
-      setEmailError('E-mail inválido');
+      setEmailError('Invalid e-mail');
     } else {
       setEmailError(undefined);
     }
@@ -49,11 +49,11 @@ export default function Login() {
     })
     .catch(err => {
       if (err.code === 'auth/user-not-found') {
-        setError("Usuário não encontrado!")
+        setError("User not found!")
       }
 
       if (err.code === 'auth/wrong-password') {
-        setError("Senha incorreta!")
+        setError("Incorrect password!")
       }
     })
     .finally(() => {
@@ -88,7 +88,7 @@ export default function Login() {
         redirecting && (
           <View className="w-full items-center justify-center mt-6">
             <Text className="text-green-300 text-xs font-semibold">
-              Logado com sucesso! Redirecionando...
+              Success Login! Redirecting...
             </Text>
           </View>
         )
@@ -100,7 +100,7 @@ export default function Login() {
         </Text>
 
         <Input 
-          placeholder="Digite seu e-mail"
+          placeholder="Type your e-mail"
           setText={handleEmail}
           text={email}
         />
@@ -118,7 +118,7 @@ export default function Login() {
         </Text>
 
         <Input 
-          placeholder="Digite sua senha"
+          placeholder="Type your password"
           setText={handlePassword}
           text={password}
           secureTextEntry={true}
@@ -147,12 +147,12 @@ export default function Login() {
 
       <View className="w-full items-center justify-center mt-4">
         <Text className="text-zinc-400 font-semibold">
-          Não possui uma conta?
+          Don't have an account?
         </Text>
 
         <TouchableOpacity onPress={goRegister}>          
           <Text className="text-white mt-2 underline font-semibold">
-            Cadastrar
+            Register
           </Text>   
         </TouchableOpacity>
       </View>

@@ -1,17 +1,17 @@
-import { dayjs } from '../lib/dayjs';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 
 function isBissexto(year: number) {
   return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
 }
 
 function generateRangeDatesFromYearStart(year: number) {
-  const startDate = dayjs().year(year).tz('America/Sao_Paulo', true).startOf('year');
-  const currentYear = dayjs().startOf('year').get('year');
+  const startDate = moment(`${year}-01-01`);
+  const currentYear = moment().year();
   const isSameYear = currentYear === year;
   const endDate = isSameYear 
-    ? dayjs().year(year).tz('America/Sao_Paulo', true).toDate() 
-    : dayjs().year(year).tz('America/Sao_Paulo', true).endOf('year').toDate();
+    ? moment() 
+    : moment().endOf('year');
 
   let dateRange = []
   let compareDate = startDate
@@ -52,38 +52,38 @@ function generateRangeDatesFromYearStart(year: number) {
 const week = [
   {
     id: 0,
-    description: 'Domingo'
+    description: 'Sunday'
   },
   {
     id: 1,
-    description: 'Segunda-feira'
+    description: 'Monday'
   },
   {
     id: 2,
-    description: 'Terça-feira'
+    description: 'Tuesday'
   },
   {
     id: 3,
-    description: 'Quarta-feira'
+    description: 'Wednesday'
   },
   {
     id: 4,
-    description: 'Quinta-feira'
+    description: 'Thursday'
   },
   {
     id: 5,
-    description: 'Sexta-feira'
+    description: 'Friday'
   },
   {
     id: 6,
-    description: 'Sábado'
+    description: 'Saturday'
   }
 ]
 
 const months = [
   {
     id: 0,
-    description: 'Janeiro'
+    description: 'Janurary'
   },
   {
     id: 1,

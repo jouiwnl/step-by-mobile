@@ -89,7 +89,7 @@ export default function Register() {
         redirecting && (
           <View className="w-full items-center justify-center mt-6">
             <Text className="text-green-300 text-xs font-semibold">
-              Conta criada com sucesso! Redirecionando...
+              Register success! Redirecting...
             </Text>
           </View>
         )
@@ -101,7 +101,7 @@ export default function Register() {
         </Text>
 
         <Input 
-          placeholder="Digite seu e-mail"
+          placeholder="Type your e-mail"
           setText={handleEmail}
           text={email}
           keyboardType="email-address"
@@ -120,14 +120,14 @@ export default function Register() {
         </Text>
 
         <Input 
-          placeholder="Digite sua senha"
+          placeholder="Type your password"
           setText={handlePassword}
           text={password}
           secureTextEntry={true}
         />
 
         <Input 
-          placeholder="Confirme sua senha"
+          placeholder="Confirm your password"
           setText={handleConfirmationPassword}
           text={confirmPassword}
           secureTextEntry={true}
@@ -136,7 +136,7 @@ export default function Register() {
         {
           !isPasswordEquals && (
             <Text className="text-red-400 font-semibold text-xs mt-2 ml-2">
-              As senhas não correspondem!
+              Passwords don't match!
             </Text>
           )
         }
@@ -146,7 +146,7 @@ export default function Register() {
             save={createAccount}
             saving={logging}
             isDisabled={!isRegistrable()}
-            text="Cadastrar"
+            text="Register"
             height={12}
           />
         </View>

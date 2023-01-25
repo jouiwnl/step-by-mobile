@@ -1,4 +1,3 @@
-import './src/lib/dayjs';
 import React, { useState } from 'react';
 
 import { StatusBar } from 'react-native';

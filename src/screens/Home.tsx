@@ -1,5 +1,5 @@
 import colors from "tailwindcss/colors";
-import { dayjs } from "../lib/dayjs";
+import moment from 'moment';
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons';
@@ -21,7 +21,7 @@ export function Home() {
   const { navigate } = navigation;
   const { params }: any = useRoute();
 
-  const currentYear = dayjs().startOf('year').tz('America/Sao_Paulo', true).get('year');
+  const currentYear = moment().year();
 
   const { signOutNow, user } = useContext(AuthContext);
 
@@ -93,7 +93,7 @@ export function Home() {
 
       <View className="flex-row items-center justify-between">
         <Text className="text-white text-3xl font-extrabold">
-          Anos
+          Years
         </Text>
 
         <View className="flex-row items-center justify-between">
@@ -109,7 +109,7 @@ export function Home() {
             />
 
             <Text className="text-white ml-3 font-semibold text-base">
-              Novo
+              New
             </Text>
           </TouchableOpacity>
 

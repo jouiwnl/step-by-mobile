@@ -1,7 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Text, View, ScrollView } from 'react-native';
 import { BackButton } from '../components/BackButton';
-import { dayjs } from '../lib/dayjs';
 import { Progressbar } from '../components/Progressbar';
 import { Checkbox } from '../components/Checkbox';
 import { capitalizeFirstLetter } from '../utils/stringUtils';
@@ -10,6 +9,7 @@ import { api } from '../lib/api';
 import { calculateProgress } from '../utils/mathUtils';
 import { Loading } from '../components/Loading';
 import { AuthContext } from '../contexts/Auth';
+import moment from 'moment-timezone';
 
 interface RouteParams {
   date: string;
@@ -35,12 +35,13 @@ export function Habit() {
   const { setOptions } = useNavigation();
   const { date } = route.params as RouteParams;
 
-  const parsedDate = dayjs.utc(date).tz('America/Sao_Paulo', true);
+  const parsedDate = moment(date).utcOffset(-3);
+
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');
 
-  const today = dayjs().startOf('day').tz('America/Sao_Paulo', true)
-  const editable = today.isSame(parsedDate, 'day');
+  const today = moment(new Date()).utcOffset(-3);
+  const editable = today.isSame(parsedDate, 'D');
 
   const { user } = useContext(AuthContext);
 
@@ -89,6 +90,7 @@ export function Habit() {
       setHabits(finalHabits);
       setProgress(calculateProgress(habits.length, completed.length));
     })
+    .catch(err => console.log(err.response))
     .finally(() => {
      setLoading(false); 
     })

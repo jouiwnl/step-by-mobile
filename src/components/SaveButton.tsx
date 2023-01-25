@@ -35,7 +35,7 @@ export function SaveButton({ isDisabled, save, saving, text, height }: SaveButto
             />
 
             <Text className="font-semibold text-base text-white ml-2">
-              {text ?? 'Confirmar'}
+              {text ?? 'Confirm'}
             </Text>
           </>
         )

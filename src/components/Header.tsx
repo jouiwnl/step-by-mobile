@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export function Header(props: HeaderProps) {
 
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<any>();
 
   return (
     <View className="w-full flex-row items-center justify-between">
@@ -32,7 +32,7 @@ export function Header(props: HeaderProps) {
           />
 
           <Text className="text-white text-base font-semibold ml-3">
-            Hábitos
+            Habits
           </Text>
         </TouchableOpacity>
       </View>

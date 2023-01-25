@@ -7,10 +7,11 @@ import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Loading } from '../components/Loading';
-import { dayjs } from '../lib/dayjs';
 import clsx from 'clsx';
 import { week } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
+
+import moment from 'moment-timezone';
 
 interface HabitResponse {
 	id: string;
@@ -28,7 +29,7 @@ export function Habits() {
 	const { params } = useRoute();
 	const { year, reload } = params as HabitRoute;
 
-	const currentYear = dayjs().startOf('year').tz('America/Sao_paulo', true).get('year');
+	const currentYear = moment().year();
 	const isNotCurrentYear = currentYear !== year;
 
   const { user } = useContext(AuthContext);
@@ -77,7 +78,7 @@ export function Habits() {
 
 			<View className="flex-row items-center justify-between">
 				<Text className="mt-6 text-white font-extrabold text-3xl">
-					Hábitos
+					Habits
 				</Text>
 
 				<TouchableOpacity 
@@ -95,7 +96,7 @@ export function Habits() {
 					/>
 
 					<Text className="text-white ml-3 font-semibold text-base">
-						Novo
+						New
 					</Text>
 				</TouchableOpacity>
 			</View>
