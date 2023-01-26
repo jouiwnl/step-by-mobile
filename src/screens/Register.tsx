@@ -11,11 +11,14 @@ import { useNavigation } from '@react-navigation/native';
 import { isValidEmail } from '../utils/stringUtils';
 import { AuthContext } from '../contexts/Auth';
 import { api } from '../lib/api';
+import clsx from 'clsx';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
 
 export default function Register() {
 
   const { goBack } = useNavigation();
   const { createUser } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,12 +76,16 @@ export default function Register() {
       contentContainerStyle={{
         paddingBottom: 100,
       }}  
-      className="flex-1 bg-background px-8 pt-16"
+      className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+        'bg-background': dark
+      })}
     >
       <BackButton />
 
       <View className="w-full items-center justify-center mt-10">
-        <Text className="text-white text-6xl font-semibold mb-6">
+        <Text className={clsx("text-zinc-900 text-6xl font-semibold mb-6", {
+          'text-white': dark
+        })}>
           Step-by
         </Text>
 
@@ -88,7 +95,7 @@ export default function Register() {
       {
         redirecting && (
           <View className="w-full items-center justify-center mt-6">
-            <Text className="text-green-300 text-xs font-semibold">
+            <Text className="text-green-500 text-xs font-semibold">
               Register success! Redirecting...
             </Text>
           </View>
@@ -96,7 +103,9 @@ export default function Register() {
       }
 
       <View className="flex-1 w-full mt-12">
-        <Text className="text-white text-base font-semibold ml-1">
+        <Text className={clsx("text-zinc-900 text-base font-semibold ml-1", {
+          'text-white': dark
+        })}>
           E-mail
         </Text>
 
@@ -115,8 +124,10 @@ export default function Register() {
           )
         }
 
-        <Text className="text-white text-base font-semibold ml-1 mt-6">
-          Senha
+        <Text className={clsx("text-zinc-900 text-base font-semibold ml-1 mt-6", {
+          'text-white': dark
+        })}>
+          Password
         </Text>
 
         <Input 

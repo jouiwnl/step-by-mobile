@@ -7,11 +7,14 @@ import { useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../contexts/Auth';
 import { isValidEmail } from '../utils/stringUtils';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
+import clsx from 'clsx';
 
 export default function Login() {
 
   const { navigate } = useNavigation<any>();
   const { signIn } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -74,10 +77,14 @@ export default function Login() {
       contentContainerStyle={{
         paddingBottom: 100,
       }}  
-      className="flex-1 bg-background px-8 pt-16"
+      className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+        'bg-background': dark
+      })}
     >
       <View className="w-full items-center justify-center mt-20">
-        <Text className="text-white text-6xl font-semibold mb-6">
+        <Text className={clsx("text-zinc-900 text-6xl font-semibold mb-6", {
+          'text-white': dark
+        })}>
           Step-by
         </Text>
 
@@ -87,7 +94,7 @@ export default function Login() {
       {
         redirecting && (
           <View className="w-full items-center justify-center mt-6">
-            <Text className="text-green-300 text-xs font-semibold">
+            <Text className="text-green-500 text-xs font-semibold">
               Success Login! Redirecting...
             </Text>
           </View>
@@ -95,7 +102,9 @@ export default function Login() {
       }
 
       <View className="flex-1 w-full mt-12">
-        <Text className="text-white text-base font-semibold ml-1">
+        <Text className={clsx("text-zinc-900 text-base font-semibold ml-1", {
+          'text-white': dark
+        })}>
           E-mail
         </Text>
 
@@ -113,8 +122,10 @@ export default function Login() {
           )
         } 
 
-        <Text className="text-white text-base font-semibold ml-1 mt-6">
-          Senha
+        <Text className={clsx("text-zinc-900 text-base font-semibold ml-1 mt-6", {
+          'text-white': dark
+        })}>
+          Password
         </Text>
 
         <Input 
@@ -151,7 +162,9 @@ export default function Login() {
         </Text>
 
         <TouchableOpacity onPress={goRegister}>          
-          <Text className="text-white mt-2 underline font-semibold">
+          <Text className={clsx("text-zinc-900 mt-2 underline font-semibold", {
+            'text-white': dark
+          })}>
             Register
           </Text>   
         </TouchableOpacity>

@@ -10,9 +10,10 @@ interface props {
 	title?: string;
 	onPress?: () => void;
 	disabled: boolean;
+  dark?: boolean;
 }
 
-export function Checkbox({ checked = false, title, onPress, disabled }: props) {
+export function Checkbox({ checked = false, title, onPress, disabled, dark }: props) {
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
@@ -33,12 +34,15 @@ export function Checkbox({ checked = false, title, onPress, disabled }: props) {
 					/>
 				</Animated.View>
 			) : (
-				<View className={clsx("w-8 h-8 bg-zinc-900 rounded-lg", {
-					'bg-zinc-500': disabled
+				<View className={clsx("w-8 h-8 bg-zinc-300 rounded-lg", {
+					'bg-zinc-500': disabled,
+          'bg-zinc-900': dark
 				})} />
 			)}
 
-			<Text className="text-white font-semibold text-base ml-3">
+			<Text className={clsx("text-zinc-900 font-semibold text-base ml-3", {
+        'text-white': dark
+      })}>
 				{title}
 			</Text>
 		</TouchableOpacity>

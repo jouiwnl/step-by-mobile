@@ -9,6 +9,8 @@ import { api } from "../lib/api";
 import { Loading } from "../components/Loading";
 import { AuthContext } from "../contexts/Auth";
 import { registerForPushNotification } from "../notification/notification";
+import { ScreenThemeContext } from "../contexts/ScreenTheme";
+import clsx from "clsx";
 
 interface YearResponse {
   id: string;
@@ -24,15 +26,18 @@ export function Home() {
   const currentYear = moment().year();
 
   const { signOutNow, user } = useContext(AuthContext);
+  const { dark, handleDarkMode } = useContext(ScreenThemeContext);
 
   const [years, setYears] = useState<YearResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
 
   function fetchData() {
     setLoading(true);
 
     api.get(`/years?user_id=${user?.id}`).then(response => {
       setYears(response.data);
+      setLoading(false);
     })
     .then(() => {
       registerForPushNotification().then(token => {
@@ -48,8 +53,7 @@ export function Home() {
           }
         })
       })
-    })
-    .finally(() => setLoading(false));
+    });
   }
 
   function createYearIfNotExists() {
@@ -89,28 +93,37 @@ export function Home() {
   }, [params?.reload]))
 
   return (
-    <View className="flex-1 bg-background px-8 pt-16">
-
+    <View className={clsx("flex-1 bg-slate-50 px-8 pt-16", { 
+      'bg-background': dark 
+    })}>
       <View className="flex-row items-center justify-between">
-        <Text className="text-white text-3xl font-extrabold">
+        <Text className={clsx("text-zinc-900 text-3xl font-extrabold", {
+          'text-white': dark 
+        })}>
           Years
         </Text>
 
         <View className="flex-row items-center justify-between">
           <TouchableOpacity 
             activeOpacity={0.7}
-            className="flex-row h-11 px-4 border border-blue-500 rounded-lg items-center" 
-            onPress={() => navigate('newyear')}
+            className="flex-row h-11 px-4 items-center" 
+            onPress={handleDarkMode}
           >
-            <Feather 
-              name="plus"
-              color={colors.blue[500]}
-              size={20}
-            />
-
-            <Text className="text-white ml-3 font-semibold text-base">
-              New
-            </Text>
+            {
+              dark ? (
+                <Feather 
+                  name="moon"
+                  color={colors.zinc[100]}
+                  size={24}
+                />
+              ) : (
+                <Feather 
+                  name="sun"
+                  color={colors.zinc[900]}
+                  size={24}
+                />
+              )
+            }
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -143,7 +156,9 @@ export function Home() {
                     onPress={() => navigate('summary', { year: year.year_number })}
                     key={year.id}
                   >
-                    <Text className="text-white font-bold text-xl">
+                    <Text className={clsx("text-zinc-900 font-bold text-xl", {
+                      'text-white': dark
+                    })}>
                       {year.year_number}
                     </Text>
       

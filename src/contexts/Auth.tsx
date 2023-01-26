@@ -32,7 +32,6 @@ export function AuthProvider({ children }: any) {
     api.get(`/users/${email}`).then(response => {
       setUser(response.data);
     })
-    .catch(err => console.log(err.response))
   }
 
   async function signOutNow() {

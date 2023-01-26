@@ -14,6 +14,8 @@ import { AuthContext } from '../contexts/Auth';
 import moment from 'moment-timezone';
 
 import _ from 'lodash';
+import clsx from 'clsx';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -34,6 +36,7 @@ export function Summary() {
   const { year } = params as SummaryRoute;
 
   const { user } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
   const [weekDaysHabits, setWeekDaysHabits] = useState<WeekDaysHabitsResponse[]>([]);
   const [datesFromYearStart, setDatesFromYearStart] = useState<any[]>([]);
@@ -68,8 +71,10 @@ export function Summary() {
   }, []));
 
   return (
-    <View className='flex-1 bg-background px-8 pt-16'>
-      <Header year={year} />
+    <View className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+      'bg-background': dark
+    })}>
+      <Header year={year} dark={dark} />
 
       <View className="flex-row mt-6 mb-2">
         {
@@ -106,6 +111,7 @@ export function Summary() {
                   completed={dayHabit?.completed ?? 0}
                   date={date.date}
                   disabled={date.disabled}
+                  dark={dark}
                   onPress={() => navigate('habit', defineHabitdayParams(dayHabit ?? date))}
                 />
               )
@@ -119,7 +125,9 @@ export function Summary() {
               return (
                 <View 
                   key={index}
-                  className="bg-zinc-900 rounded-lg border-2 m-1 border-zinc-800 opacity-40"
+                  className={clsx("bg-zinc-300 rounded-lg border-2 m-1 border-zinc-300", {
+                    'bg-zinc-900 border-zinc-800 opacity-40': dark
+                  })}
                   style={{ width: DAY_SIZE, height: DAY_SIZE }}
                 />
               )

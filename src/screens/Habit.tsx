@@ -10,6 +10,8 @@ import { calculateProgress } from '../utils/mathUtils';
 import { Loading } from '../components/Loading';
 import { AuthContext } from '../contexts/Auth';
 import moment from 'moment-timezone';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
+import clsx from 'clsx';
 
 interface RouteParams {
   date: string;
@@ -44,6 +46,7 @@ export function Habit() {
   const editable = today.isSame(parsedDate, 'D');
 
   const { user } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
   const [habits, setHabits] = useState<HabitResponse[]>([]); 
   const [progress, setProgress] = useState<number>(0);
@@ -107,7 +110,9 @@ export function Habit() {
   }, [saving])
 
   return (
-    <View className="flex-1 bg-background px-8 pt-16">
+    <View className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+      'bg-background': dark
+    })}>
       <View className="w-full items-center justify-start flex-row">
         {
           saving ? (
@@ -130,7 +135,9 @@ export function Habit() {
               {capitalizeFirstLetter(dayOfWeek)}
             </Text>
 
-            <Text className="text-white font-extrabold text-3xl">
+            <Text className={clsx("text-zinc-900 font-extrabold text-3xl", {
+              'text-white': dark
+            })}>
               {dayAndMonth}
             </Text>
 
@@ -145,10 +152,13 @@ export function Habit() {
                     checked={habit.checked}
                     onPress={() => toggleHabit(habit)}
                     disabled={!editable}
+                    dark={dark}
                   />
                 ))
               ) : (
-                <Text className="text-white text-base font-extrabold">
+                <Text className={clsx("text-zinc-900 text-base font-extrabold", {
+                  'text-white': dark
+                })}>
                   Nenhum hábito por aqui!
                 </Text>
               )}

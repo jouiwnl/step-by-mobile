@@ -12,6 +12,7 @@ import { week } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
 
 import moment from 'moment-timezone';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
 
 interface HabitResponse {
 	id: string;
@@ -33,6 +34,7 @@ export function Habits() {
 	const isNotCurrentYear = currentYear !== year;
 
   const { user } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
 	const [habits, setHabits] = useState<HabitResponse[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -72,12 +74,16 @@ export function Habits() {
   }, [reload])
 
 	return (
-		<View className="flex-1 bg-background px-8 pt-16">
+		<View className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+      'bg-background': dark
+    })}>
 
 			<BackButton />
 
 			<View className="flex-row items-center justify-between">
-				<Text className="mt-6 text-white font-extrabold text-3xl">
+				<Text className={clsx("mt-6 text-zinc-900 font-extrabold text-3xl", {
+          'text-white': dark
+        })}>
 					Habits
 				</Text>
 
@@ -95,7 +101,9 @@ export function Habits() {
 						size={20}
 					/>
 
-					<Text className="text-white ml-3 font-semibold text-base">
+					<Text className={clsx("text-zinc-900 ml-3 font-semibold text-base", {
+            'text-white': dark
+          })}>
 						New
 					</Text>
 				</TouchableOpacity>
@@ -122,7 +130,9 @@ export function Habits() {
 											})}
 										>
 											<TouchableOpacity disabled={isNotCurrentYear} onPress={() => navigate('new', { habit_id: habit.id })} className="flex-1">
-												<Text className="text-white font-semibold text-xl">
+												<Text className={clsx("text-zinc-900 font-semibold text-xl", {
+                          'text-white': dark
+                        })}>
 													{habit.title}
 												</Text>
 
@@ -130,7 +140,9 @@ export function Habits() {
                           {
                             week.filter(dia => habit.weekdays?.split(',').includes(String(dia.id)))
                               .map((dia, index, { length }) => (
-                                <Text key={dia.id} className="text-white text-xs font-normal mt-2 opacity-70">
+                                <Text key={dia.id} className={clsx("text-zinc-900 text-xs font-normal mt-2 opacity-70", {
+                                  'text-white': dark
+                                })}>
                                   {dia.description}{  index + 1 === length ? '.' : ', '}
                                 </Text>
                               ))
@@ -149,7 +161,9 @@ export function Habits() {
 									))}
 								</ScrollView>
 							) : (
-								<Text className="text-white mt-6 text-base font-bold">
+								<Text className={clsx("text-zinc-900 mt-6 text-base font-bold", {
+                  'text-white': dark
+                })}>
 									Nenhum hábito por aqui!
 								</Text>
 							)

@@ -4,9 +4,11 @@ import colors from 'tailwindcss/colors';
 
 import { Subtitle } from '../assets/Subtitle';
 import { useNavigation } from "@react-navigation/native";
+import clsx from "clsx";
 
 interface HeaderProps {
   year?: number;
+  dark?: boolean;
 }
 
 export function Header(props: HeaderProps) {
@@ -31,7 +33,9 @@ export function Header(props: HeaderProps) {
             size={20}
           />
 
-          <Text className="text-white text-base font-semibold ml-3">
+          <Text className={clsx("text-zinc-900 text-base font-semibold ml-3", {
+            'text-white': props.dark
+          })}>
             Habits
           </Text>
         </TouchableOpacity>

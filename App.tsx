@@ -17,6 +17,8 @@ import { useEffect } from 'react';
 import { AuthProvider } from './src/contexts/Auth';
 import { auth } from './firebase';
 import { User } from 'firebase/auth';
+import { ScreenThemeProvider } from './src/contexts/ScreenTheme';
+import Main from './src/screens/Main';
 
 export default function App() {
   const [user, setUser] = useState<User | null>();
@@ -52,9 +54,8 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <Routes />
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-    </AuthProvider>
+    <ScreenThemeProvider>
+      <Main />
+    </ScreenThemeProvider>
   );
 }

@@ -11,6 +11,8 @@ import { AuthContext } from '../contexts/Auth';
 import { week } from '../utils/dateUtils';
 
 import moment from 'moment-timezone';
+import clsx from 'clsx';
+import { ScreenThemeContext } from '../contexts/ScreenTheme';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -40,7 +42,8 @@ export function New() {
   const today = moment().format('YYYY-MM-DD');
   const year = moment().year();
 
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
+  const { dark } = useContext(ScreenThemeContext);
 
   const [weekDays, setWeekDays] = useState<Number[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -107,7 +110,9 @@ export function New() {
   }, [])
 
   return (
-    <KeyboardAvoidingView behavior={isAndroid ? 'height' : 'padding'} className="flex-1 bg-background px-8 pt-16">
+    <KeyboardAvoidingView behavior={isAndroid ? 'height' : 'padding'} className={clsx("flex-1 bg-slate-50 px-8 pt-16", {
+      'bg-background': dark
+    })}>
       <View className="w-full items-center justify-start flex-row">
         {
           saving ? (
@@ -129,11 +134,15 @@ export function New() {
             <Loading />
           ) : (
             <>
-              <Text className="mt-6 text-white font-extrabold text-3xl">
+              <Text className={clsx("mt-6 text-zinc-900 font-extrabold text-3xl", {
+                'text-white': dark
+              })}>
                 {habit_id ? 'Edit' : 'Create'} habit
               </Text>
 
-              <Text className="mt-6 text-white font-semibold text-base">
+              <Text className={clsx("mt-6 text-zinc-900 font-semibold text-base", {
+                'text-white': dark
+              })}>
                 What is your length?
               </Text>
 
@@ -143,7 +152,9 @@ export function New() {
                 text={title}
               />
 
-              <Text className="font-semibold mt-4 mb-3 text-white text-base">
+              <Text className={clsx("font-semibold mt-4 mb-3 text-zinc-900 text-base", {
+                'text-white': dark
+              })}>
                 Qual a recorrência?
               </Text>
 
@@ -154,6 +165,7 @@ export function New() {
                     title={day.description}
                     checked={weekDays.includes(index)}
                     onPress={() => handleWeekDay(index)}
+                    dark={dark}
                     disabled={false}
                   />
                 )
