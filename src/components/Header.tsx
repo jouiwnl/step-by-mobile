@@ -5,6 +5,8 @@ import colors from 'tailwindcss/colors';
 import { Subtitle } from '../assets/Subtitle';
 import { useNavigation } from "@react-navigation/native";
 import clsx from "clsx";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/Auth";
 
 interface HeaderProps {
   year?: number;
@@ -14,11 +16,20 @@ interface HeaderProps {
 export function Header(props: HeaderProps) {
 
   const { navigate } = useNavigation<any>();
+  const { user } = useContext(AuthContext);
 
   return (
     <View className="w-full flex-row items-center justify-between">
-      <View className="w-2">
-        <Subtitle />
+      <View className={clsx("w-2", { 'flex-1': !!user!.color })}>
+        {!!user!.color ? (
+          <Text className={clsx("text-zinc-900 text-base font-semibold ml-3", {
+            'text-white': props.dark
+          })}>
+            Custom color
+          </Text>
+        ) : (
+          <Subtitle />
+        )}
       </View>
 
       <View className="flex-row items-center">

@@ -9,6 +9,7 @@ import { NewYear } from '../screens/NewYear';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
 import { auth } from '../../firebase';
+import CustomColor from '../screens/CustomColor';
 
 const { Screen, Navigator } = createNativeStackNavigator();
 
@@ -62,6 +63,11 @@ export function AppRoutes() {
 			<Screen
 				name='habits'
 				component={Habits}
+			/>
+
+			<Screen
+				name='customColor'
+				component={CustomColor}
 			/>
 		</Navigator>
 	)

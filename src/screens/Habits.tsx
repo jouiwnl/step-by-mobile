@@ -13,6 +13,7 @@ import { AuthContext } from '../contexts/Auth';
 
 import moment from 'moment-timezone';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
+import { defaultColors } from '../utils/themeUtils';
 
 interface HabitResponse {
 	id: string;
@@ -38,6 +39,8 @@ export function Habits() {
 
 	const [habits, setHabits] = useState<HabitResponse[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+
+	const newButtonBackgroundColor = !!user!.color ? `#${user!.color.color_3}` : defaultColors.blue500;
 
 	function fetchData() {
 		setLoading(true);
@@ -89,15 +92,18 @@ export function Habits() {
 
 				<TouchableOpacity 
 					activeOpacity={0.7}
-					className={clsx("flex-row h-11 px-4 border border-blue-500 rounded-lg items-center mr-2 mt-6", {
+					className={clsx("flex-row h-11 px-4 border rounded-lg items-center mr-2 mt-6", {
 						'opacity-30': isNotCurrentYear
 					})} 
 					onPress={() => navigate('new', {})}
 					disabled={isNotCurrentYear}
+					style={{
+						borderColor: newButtonBackgroundColor
+					}}
 				>
 					<Feather 
 						name="plus"
-						color={colors.blue[500]}
+						color={newButtonBackgroundColor}
 						size={20}
 					/>
 

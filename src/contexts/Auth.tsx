@@ -7,10 +7,21 @@ export interface AuthContextProps {
   signOutNow?: () => Promise<void>;
   signIn?: (email: string, password: string) => Promise<UserCredential>;
   createUser?: (email: string, password: string) => Promise<UserCredential>;
+  reloadUser?: () => void;
   user?: {
     id: string;
     email: string;
+    color: ColorsProps
   }
+}
+
+interface ColorsProps {
+  id: string;
+  color_1: string;
+  color_2: string;
+  color_3: string;
+  color_4: string;
+  color_5: string;
 }
 
 export const AuthContext = createContext<AuthContextProps>({});
@@ -44,12 +55,17 @@ export function AuthProvider({ children }: any) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 
+  function reloadUser() {
+    getUser(auth.currentUser!.email);
+  }
+
   return (
     <AuthContext.Provider value={{
       signIn, 
       signOutNow,
       createUser,
-      user
+      user,
+      reloadUser
     }}>
       {children}
     </AuthContext.Provider>

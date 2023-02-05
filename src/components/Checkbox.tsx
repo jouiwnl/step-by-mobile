@@ -3,6 +3,8 @@ import { Feather } from '@expo/vector-icons'
 import colors from "tailwindcss/colors";
 import clsx from "clsx";
 import Animated, { RotateInDownLeft, RotateInDownRight } from "react-native-reanimated";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/Auth";
 
 
 interface props {
@@ -14,6 +16,10 @@ interface props {
 }
 
 export function Checkbox({ checked = false, title, onPress, disabled, dark }: props) {
+
+	const { user } = useContext(AuthContext);
+	const backgroundColor = !!user!.color ? `#${user!.color.color_3}` : '#3b82f6';
+
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
@@ -23,9 +29,12 @@ export function Checkbox({ checked = false, title, onPress, disabled, dark }: pr
 		>
 			{checked ? (
 				<Animated.View 
-          className="h-8 w-8 bg-blue-500 rounded-lg items-center justify-center"
+          className={`h-8 w-8 rounded-lg items-center justify-center`}
           entering={RotateInDownLeft}
           exiting={RotateInDownLeft}
+					style={{
+						backgroundColor
+					}}
         >
 					<Feather
 						name="check"

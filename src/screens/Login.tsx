@@ -82,7 +82,8 @@ export default function Login() {
       })}
     >
       <View className="w-full items-center justify-center mt-20">
-        <Text className={clsx("text-zinc-900 text-6xl font-semibold mb-6", {
+        <Text className=
+      {clsx("text-zinc-900 text-6xl font-semibold mb-6", {
           'text-white': dark
         })}>
           Step-by
@@ -116,7 +117,7 @@ export default function Login() {
 
         {
           emailError && (
-            <Text className="text-red-400 font-semibold text-xs mt-2 ml-2">
+            <Text className="text-red-400 text font-semibold text-xs mt-2 ml-2">
               {emailError}
             </Text>
           )

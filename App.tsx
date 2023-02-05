@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { StatusBar } from 'react-native';
 import { 
   useFonts,
   Inter_400Regular,
@@ -10,11 +9,9 @@ import {
 } from '@expo-google-fonts/inter';
 
 import { Loading } from './src/components/Loading';
-import { Routes } from './src/routes';
 
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { AuthProvider } from './src/contexts/Auth';
 import { auth } from './firebase';
 import { User } from 'firebase/auth';
 import { ScreenThemeProvider } from './src/contexts/ScreenTheme';

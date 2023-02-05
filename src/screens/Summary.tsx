@@ -35,7 +35,7 @@ export function Summary() {
   const { params } = useRoute();
   const { year } = params as SummaryRoute;
 
-  const { user } = useContext(AuthContext);
+  const { user, reloadUser } = useContext(AuthContext);
   const { dark } = useContext(ScreenThemeContext);
 
   const [weekDaysHabits, setWeekDaysHabits] = useState<WeekDaysHabitsResponse[]>([]);
@@ -56,6 +56,7 @@ export function Summary() {
   }
 
   function fetchData() {
+    reloadUser();
     const fromYearStart = generateRangeDatesFromYearStart(year);
 
     setDatesFromYearStart(fromYearStart);
@@ -125,8 +126,8 @@ export function Summary() {
               return (
                 <View 
                   key={index}
-                  className={clsx("bg-zinc-300 rounded-lg border-2 m-1 border-zinc-300", {
-                    'bg-zinc-900 border-zinc-800 opacity-40': dark
+                  className={clsx("bg-zinc-300 rounded-lg m-1", {
+                    'bg-zinc-900 opacity-40': dark
                   })}
                   style={{ width: DAY_SIZE, height: DAY_SIZE }}
                 />

@@ -53,6 +53,8 @@ export function Habit() {
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
 
+  console.log(progress)
+
   function toggleHabit(habit: HabitResponse) {
     setSaving(true);
 

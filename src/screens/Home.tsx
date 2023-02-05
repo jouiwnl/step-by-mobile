@@ -1,7 +1,7 @@
 import colors from "tailwindcss/colors";
 import moment from 'moment';
 
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useState, useEffect, useContext, useCallback } from "react";
@@ -104,6 +104,16 @@ export function Home() {
         </Text>
 
         <View className="flex-row items-center justify-between">
+          <TouchableOpacity 
+            className="flex-row h-11 px-4 items-center"
+            onPress={() => navigate('customColor')}
+          >
+            <Image 
+              className="w-7 h-7"
+              source={require('../assets/color_picker.png')}
+            />
+          </TouchableOpacity>
+
           <TouchableOpacity 
             activeOpacity={0.7}
             className="flex-row h-11 px-4 items-center" 

@@ -143,7 +143,7 @@ export function New() {
               <Text className={clsx("mt-6 text-zinc-900 font-semibold text-base", {
                 'text-white': dark
               })}>
-                What is your length?
+                What is your commitment?
               </Text>
 
               <Input 
@@ -155,7 +155,7 @@ export function New() {
               <Text className={clsx("font-semibold mt-4 mb-3 text-zinc-900 text-base", {
                 'text-white': dark
               })}>
-                Qual a recorrência?
+                What is the recurrence?
               </Text>
 
               {week.map((day, index) => {
