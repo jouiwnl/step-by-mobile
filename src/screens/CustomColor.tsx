@@ -9,6 +9,7 @@ import { SaveButton } from "../components/SaveButton";
 import { AuthContext } from "../contexts/Auth";
 import { ScreenThemeContext } from "../contexts/ScreenTheme";
 import { api } from "../lib/api";
+import { defaultColors } from "../utils/themeUtils";
 
 interface BodyRequest {
   id?: string;
@@ -27,12 +28,14 @@ export default function CustomColor() {
   const { dark } = useContext(ScreenThemeContext);
   const { user } = useContext(AuthContext);
 
-  const [color1, setColor1] = useState(user!.color.color_1 ?? "");
-  const [color2, setColor2] = useState(user!.color.color_2 ?? "");
-  const [color3, setColor3] = useState(user!.color.color_3 ?? "");
-  const [color4, setColor4] = useState(user!.color.color_4 ?? "");
-  const [color5, setColor5] = useState(user!.color.color_5 ?? "");
+  const [color1, setColor1] = useState(user!.color.color_1 ?? defaultColors.blue100);
+  const [color2, setColor2] = useState(user!.color.color_2 ?? defaultColors.blue300);
+  const [color3, setColor3] = useState(user!.color.color_3 ?? defaultColors.blue500);
+  const [color4, setColor4] = useState(user!.color.color_4 ?? defaultColors.blue600);
+  const [color5, setColor5] = useState(user!.color.color_5 ?? defaultColors.blue900);
   const [saving, setSaving] = useState(false);
+
+  const saveDisabled = !color1 || !color2 || !color3 || !color4 || !color5;
 
   function handleColor(text: string, colorNumber: number) {
     switch (colorNumber) {
@@ -122,7 +125,7 @@ export default function CustomColor() {
         <SaveButton 
           save={handleSave}
           saving={saving}
-          isDisabled={false}
+          isDisabled={saveDisabled}
         />
       </ScrollView>
     </KeyboardAvoidingView>
@@ -149,7 +152,7 @@ export function ColorInput(text: string, handleColor: any, colorNumber: number, 
       <View style={{
         width: 40,
         height: 40,
-        backgroundColor: `#${text}`,
+        backgroundColor: !text ? '#CDCDCD' : `#${text}`,
         marginTop: 55,
         marginLeft: 16
       }} />
