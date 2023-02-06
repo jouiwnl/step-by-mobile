@@ -28,11 +28,11 @@ export default function CustomColor() {
   const { dark } = useContext(ScreenThemeContext);
   const { user } = useContext(AuthContext);
 
-  const [color1, setColor1] = useState(user!.color.color_1 ?? defaultColors.blue100);
-  const [color2, setColor2] = useState(user!.color.color_2 ?? defaultColors.blue300);
-  const [color3, setColor3] = useState(user!.color.color_3 ?? defaultColors.blue500);
-  const [color4, setColor4] = useState(user!.color.color_4 ?? defaultColors.blue600);
-  const [color5, setColor5] = useState(user!.color.color_5 ?? defaultColors.blue900);
+  const [color1, setColor1] = useState(user!.color?.color_1 ?? fixDefaultColor(defaultColors.blue100));
+  const [color2, setColor2] = useState(user!.color?.color_2 ?? fixDefaultColor(defaultColors.blue300));
+  const [color3, setColor3] = useState(user!.color?.color_3 ?? fixDefaultColor(defaultColors.blue500));
+  const [color4, setColor4] = useState(user!.color?.color_4 ?? fixDefaultColor(defaultColors.blue600));
+  const [color5, setColor5] = useState(user!.color?.color_5 ?? fixDefaultColor(defaultColors.blue900));
   const [saving, setSaving] = useState(false);
 
   const saveDisabled = !color1 || !color2 || !color3 || !color4 || !color5;
@@ -69,7 +69,7 @@ export default function CustomColor() {
       user_id: user!.id
     }
 
-    if (user!.color.id) {
+    if (user!.color?.id) {
       body.id = user!.color.id;
 
       api.put(`/colors/${body.id}`, body).then(() => {
@@ -86,6 +86,10 @@ export default function CustomColor() {
       setSaving(false);
       goBack();
     })
+  }
+
+  function fixDefaultColor(color: string) {
+    return color.replaceAll('#', '')
   }
 
   return (
