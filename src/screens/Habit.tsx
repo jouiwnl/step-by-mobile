@@ -12,6 +12,7 @@ import { AuthContext } from '../contexts/Auth';
 import moment from 'moment-timezone';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
 import clsx from 'clsx';
+import { AxiosError } from 'axios';
 
 interface RouteParams {
   date: string;
@@ -93,7 +94,7 @@ export function Habit() {
       setHabits(finalHabits);
       setProgress(calculateProgress(habits.length, completed.length));
     })
-    .catch(err => console.log(err.response))
+    .catch((err: AxiosError) => console.log(err.response))
     .finally(() => {
      setLoading(false); 
     })

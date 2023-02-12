@@ -1,5 +1,5 @@
 import colors from "tailwindcss/colors";
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import { Feather } from '@expo/vector-icons';
@@ -33,8 +33,6 @@ export function Home() {
 
 
   function fetchData() {
-    setLoading(true);
-
     api.get(`/years?user_id=${user?.id}`).then(response => {
       setYears(response.data);
       setLoading(false);
@@ -57,11 +55,13 @@ export function Home() {
   }
 
   function createYearIfNotExists() {
+    setLoading(true);
+    
     api.post('/years', { year_number: currentYear, user_id: user?.id })
-    .catch(err => {
-      //
-    })
-    .finally(fetchData)
+      .catch(err => {
+        //
+      })
+      .finally(fetchData)
   }
 
   function handleSignOut() {

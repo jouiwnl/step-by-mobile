@@ -56,7 +56,7 @@ export function Summary() {
   }
 
   function fetchData() {
-    reloadUser();
+    reloadUser?.();
     const fromYearStart = generateRangeDatesFromYearStart(year);
 
     setDatesFromYearStart(fromYearStart);

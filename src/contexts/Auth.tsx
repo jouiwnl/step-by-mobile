@@ -8,11 +8,13 @@ export interface AuthContextProps {
   signIn?: (email: string, password: string) => Promise<UserCredential>;
   createUser?: (email: string, password: string) => Promise<UserCredential>;
   reloadUser?: () => void;
-  user?: {
-    id: string;
-    email: string;
-    color: ColorsProps
-  }
+  user?: UserProps;
+}
+
+interface UserProps {
+  id: string;
+  email: string;
+  color: ColorsProps;
 }
 
 interface ColorsProps {

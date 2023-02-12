@@ -76,3 +76,5 @@ dist/
 
 # @end expo-cli
 firebase.ts
+ios/
+android/
