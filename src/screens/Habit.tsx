@@ -13,6 +13,7 @@ import moment from 'moment-timezone';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
 import clsx from 'clsx';
 import { AxiosError } from 'axios';
+import { timezone } from '../lib/localization';
 
 interface RouteParams {
   date: string;
@@ -38,13 +39,13 @@ export function Habit() {
   const { setOptions } = useNavigation();
   const { date } = route.params as RouteParams;
 
-  const parsedDate = moment(date).utcOffset(-3);
+  const parsedDate = moment(date).tz(timezone);
 
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');
 
-  const today = moment(new Date()).utcOffset(-3);
-  const editable = today.isSame(parsedDate, 'D');
+  const today = moment(new Date()).tz(timezone);
+  const editable = today.format('YYYYMMDD') === parsedDate.format('YYYYMMDD');
 
   const { user } = useContext(AuthContext);
   const { dark } = useContext(ScreenThemeContext);
@@ -95,9 +96,7 @@ export function Habit() {
       setProgress(calculateProgress(habits.length, completed.length));
     })
     .catch((err: AxiosError) => console.log(err.response))
-    .finally(() => {
-     setLoading(false); 
-    })
+    .finally(() => setLoading(false))
   }
 
   useEffect(() => {

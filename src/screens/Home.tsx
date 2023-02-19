@@ -58,10 +58,10 @@ export function Home() {
     setLoading(true);
     
     api.post('/years', { year_number: currentYear, user_id: user?.id })
-      .catch(err => {
-        //
-      })
-      .finally(fetchData)
+    .catch(err => {
+      //
+    })
+    .finally(fetchData)
   }
 
   function handleSignOut() {
@@ -77,6 +77,8 @@ export function Home() {
   }, [navigation]);
 
   useEffect(() => {
+    setLoading(true);
+    
     if (user?.id) {
       createYearIfNotExists();
     }

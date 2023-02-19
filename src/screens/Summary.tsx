@@ -16,6 +16,7 @@ import moment from 'moment-timezone';
 import _ from 'lodash';
 import clsx from 'clsx';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
+import { timezone } from '../lib/localization';
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -99,8 +100,8 @@ export function Summary() {
           {
             datesFromYearStart.map(date => {
               const dayHabit = weekDaysHabits.find(dia => {
-                const parsed = moment(dia.date).utcOffset(-3).format('YYYYMMDD');
-                const dateParsed = moment(date.date).utcOffset(-3).format('YYYYMMDD');
+                const parsed = moment(dia.date).tz(timezone).format('YYYYMMDD');
+                const dateParsed = moment(date.date).tz(timezone).format('YYYYMMDD');
 
                 return parsed === dateParsed;
               })

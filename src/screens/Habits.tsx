@@ -60,6 +60,7 @@ export function Habits() {
 
 	function doDelete(id: string) {
     setLoading(true);
+    
 		api.delete(`/habits/${id}`)
 			.then(fetchData)
 	}

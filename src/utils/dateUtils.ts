@@ -1,17 +1,18 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
+import { timezone } from '../lib/localization';
 
 function isBissexto(year: number) {
   return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
 }
 
 function generateRangeDatesFromYearStart(year: number) {
-  const startDate = moment(`${year}-01-01`);
-  const currentYear = moment().year();
+  const startDate = moment(`${year}-01-01`).tz(timezone);
+  const currentYear = moment().tz(timezone).year();
   const isSameYear = currentYear === year;
   const endDate = isSameYear 
-    ? moment() 
-    : moment().endOf('year');
+    ? moment().tz(timezone) 
+    : moment().tz(timezone).endOf('year');
 
   let dateRange = []
   let compareDate = startDate

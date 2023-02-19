@@ -158,7 +158,8 @@ export function ColorInput(text: string, handleColor: any, colorNumber: number, 
         height: 40,
         backgroundColor: !text ? '#CDCDCD' : `#${text}`,
         marginTop: 55,
-        marginLeft: 16
+        marginLeft: 16,
+        borderRadius: 4
       }} />
     </View>
   )

@@ -11,22 +11,23 @@ export const ScreenThemeContext = createContext<ScreenThemeContextProps>({});
 
 export function ScreenThemeProvider({ children }: any) {
   const [dark, setDark] = useState(false);
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
-    AsyncStorage.getItem('dark').then(value => {
-      if (!!value) {
-        setDark(!!value)
-      } else {
+    AsyncStorage.getItem('theme').then(value => {
+      if (value === 'dark' || !value) {
         setDark(true)
+      } else {
+        setDark(false)
       }
     });
   }, [])
 
   useEffect(() => {
     if (dark) {
-      AsyncStorage.setItem('dark', 'true');
+      AsyncStorage.setItem('theme', 'dark');
     } else {
-      AsyncStorage.setItem('dark', 'false');
+      AsyncStorage.setItem('theme', 'light');
     }
   }, [dark])
 
