@@ -8,7 +8,6 @@ async function registerForPushNotification() {
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 
     if (status !== 'granted') {
-      alert('Error')
       return
     }
   }

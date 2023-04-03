@@ -32,8 +32,17 @@ export function Home() {
   const [loading, setLoading] = useState<boolean>(false);
 
 
-  function fetchData() {
-    api.get(`/years?user_id=${user?.id}`).then(response => {
+  async function fetchData() {
+    setLoading(true);
+
+    api.get<YearResponse[]>(`/years?user_id=${user?.id}`).then(response => {
+      const years = response.data;
+      const hasCurrentYear = years.find(y => y.year_number === currentYear);
+
+      if (!hasCurrentYear) {
+        createYearIfNotExists();
+      }
+
       setYears(response.data);
       setLoading(false);
     })
@@ -54,14 +63,12 @@ export function Home() {
     });
   }
 
-  function createYearIfNotExists() {
-    setLoading(true);
-    
+  function createYearIfNotExists() { 
     api.post('/years', { year_number: currentYear, user_id: user?.id })
-    .catch(err => {
-      //
-    })
-    .finally(fetchData)
+      .then(fetchData)
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   function handleSignOut() {
@@ -77,12 +84,10 @@ export function Home() {
   }, [navigation]);
 
   useEffect(() => {
-    setLoading(true);
-    
     if (user?.id) {
-      createYearIfNotExists();
+      fetchData();
     }
-  }, [user])
+  }, [user?.id])
 
   useFocusEffect(useCallback(() => {
     if (!params?.reload) {
