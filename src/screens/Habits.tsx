@@ -19,6 +19,9 @@ interface HabitResponse {
 	id: string;
 	title: string;
   weekdays: string;
+  activation_date: Date;
+  deactivation_date: Date;
+  disabled: string;
 }
 
 interface HabitRoute {
@@ -31,7 +34,8 @@ export function Habits() {
 	const { params } = useRoute();
 	const { year, reload } = params as HabitRoute;
 
-	const currentYear = moment().year();
+  const today = moment();
+	const currentYear = today.year();
 	const isNotCurrentYear = currentYear !== year;
 
   const { user } = useContext(AuthContext);
@@ -58,10 +62,24 @@ export function Habits() {
 		])
 	}
 
+  function handleActive(habit: HabitResponse) {
+		Alert.alert("Hábito", `Deseja continuar ${habit.title}?`, [
+			{ text: 'Confirmar', onPress: () => doActive(habit.id) },
+			{ text: 'Cancelar', onPress: () => { } }
+		])
+	}
+
 	function doDelete(id: string) {
     setLoading(true);
     
-		api.delete(`/habits/${id}`)
+		api.patch(`/habits/${id}/DEACTIVE`)
+			.then(fetchData)
+	}
+
+  function doActive(id: string) {
+    setLoading(true);
+    
+		api.patch(`/habits/${id}/ACTIVE`)
 			.then(fetchData)
 	}
 
@@ -133,10 +151,10 @@ export function Habits() {
 									{habits.map(habit => (
 										<View key={habit.id} 
 											className={clsx("w-full justify-between items-center flex-row py-4", {
-												'opacity-30': isNotCurrentYear
+												'opacity-30': isNotCurrentYear || habit.disabled === 'yes'
 											})}
 										>
-											<TouchableOpacity disabled={isNotCurrentYear} onPress={() => navigate('new', { habit_id: habit.id })} className="flex-1">
+											<TouchableOpacity disabled={isNotCurrentYear} onPress={() => {habit.disabled === 'yes' ? handleActive(habit) : navigate('new', { habit_id: habit.id })}} className="flex-1">
 												<Text className={clsx("text-zinc-900 font-semibold text-xl", {
                           'text-white': dark
                         })}>
@@ -157,7 +175,7 @@ export function Habits() {
                         </View>
 											</TouchableOpacity>
 
-											<TouchableOpacity onPress={() => handleDelete(habit)} className="px-4">
+											<TouchableOpacity disabled={habit.disabled === 'yes'} onPress={() => handleDelete(habit)} className="px-4">
 												<Feather
 													name="trash"
 													size={20}
