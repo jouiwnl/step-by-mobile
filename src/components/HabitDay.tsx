@@ -89,7 +89,10 @@ export function HabitDay(props: props) {
 
   return (
     <TouchableOpacity 
-      className="bg-zinc-900"
+      className={clsx("bg-zinc-900", {
+        'bg-background': props.disabled && props.dark,
+        'bg-slate-50': props.disabled && !props.dark
+      })}
       disabled={props.disabled}
       style={defineStyles()}
       activeOpacity={0.7}

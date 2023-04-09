@@ -8,11 +8,7 @@ function isBissexto(year: number) {
 
 function generateRangeDatesFromYearStart(year: number) {
   const startDate = moment(`${year}-01-01`).tz(timezone);
-  const currentYear = moment().tz(timezone).year();
-  const isSameYear = currentYear === year;
-  const endDate = isSameYear 
-    ? moment().tz(timezone) 
-    : moment().tz(timezone).endOf('year');
+  const endDate = moment(startDate).tz(timezone).endOf('year');
 
   let dateRange = []
   let compareDate = startDate
@@ -31,7 +27,9 @@ function generateRangeDatesFromYearStart(year: number) {
     dateRange.push({
       id: newDate.toISOString(),
       date: newDate.toDate(),
-      day_of_week: startDate.get('day'),
+      day_of_week: newDate.get('day'),
+      month:  months.find(m => m.id === newDate.get('month'))?.description,
+      parsed_date: newDate.format('YYYYMMDD'),
       disabled: true
     })
   })
@@ -41,6 +39,8 @@ function generateRangeDatesFromYearStart(year: number) {
       id: compareDate.toISOString(),
       date: compareDate.toDate(),
       day_of_week: compareDate.get('day'),
+      month:  months.find(m => m.id === compareDate.get('month'))?.description,
+      parsed_date: compareDate.format('YYYYMMDD'),
       disabled: false
     })
 
@@ -84,52 +84,64 @@ const week = [
 const months = [
   {
     id: 0,
-    description: 'Janurary'
+    description: 'January',
+    days: 31
   },
   {
     id: 1,
-    description: 'Fevereiro'
+    description: 'February',
+    days: 28
   },
   {
     id: 2,
-    description: 'Março'
+    description: 'March',
+    days: 31
   },
   {
     id: 3,
-    description: 'Abril'
+    description: 'April',
+    days: 30
   },
   {
     id: 4,
-    description: 'Maio'
+    description: 'May',
+    days: 31
   },
   {
     id: 5,
-    description: 'Junho'
+    description: 'June',
+    days: 30
   },
   {
     id: 6,
-    description: 'Julho'
+    description: 'July',
+    days: 31
   },
   {
     id: 7,
-    description: 'Agosto'
+    description: 'August',
+    days: 31
   },
   {
     id: 8,
-    description: 'Setembro'
+    description: 'September',
+    days: 30
   },
   {
     id: 9,
-    description: 'Outubro'
+    description: 'October',
+    days: 31
   },
   {
     id: 10,
-    description: 'Novembro'
+    description: 'November',
+    days: 30
   },
   {
     id: 11,
-    description: 'Dezembro'
+    description: 'December',
+    days: 31
   }
 ]
 
-export { isBissexto, generateRangeDatesFromYearStart, week }
+export { isBissexto, generateRangeDatesFromYearStart, week, months }

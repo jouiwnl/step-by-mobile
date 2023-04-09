@@ -1,22 +1,21 @@
+import moment from 'moment-timezone';
+import _ from 'lodash';
+import clsx from 'clsx';
+
 import { Text, View, ScrollView } from 'react-native';
-import { useCallback, useContext } from 'react';
+import { JSXElementConstructor, useCallback, useContext } from 'react';
 
 import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
 
 import { Header } from '../components/Header';
 import { HabitDay, DAY_SIZE } from '../components/HabitDay';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { api } from '../lib/api';
-import { isBissexto } from '../utils/dateUtils';
 import { AuthContext } from '../contexts/Auth';
-
-import moment from 'moment-timezone';
-
-import _ from 'lodash';
-import clsx from 'clsx';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
 import { timezone } from '../lib/localization';
+import { useFrameCallback } from 'react-native-reanimated';
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -25,6 +24,7 @@ interface WeekDaysHabitsResponse {
   date: Date;
   completed?: number;
   amount?: number;
+  date_parsed?: string;
 }
 
 interface SummaryRoute {
@@ -40,10 +40,33 @@ export function Summary() {
   const { dark } = useContext(ScreenThemeContext);
 
   const [weekDaysHabits, setWeekDaysHabits] = useState<WeekDaysHabitsResponse[]>([]);
-  const [datesFromYearStart, setDatesFromYearStart] = useState<any[]>([]);
-  const [amountOfDaysToFill, setAmountOfDaysToFill] = useState<number>(0);
+  //const [datesFromYearStart, setDatesFromYearStart] = useState<{ month: string; days: any[] }[]>([]);
 
-  const minimunSummaryDatesSizes = isBissexto(year) ? 366 : 365;
+  const today = moment();
+
+  const datesFromYearStart = useMemo(() => {
+    const fromYearStart = generateRangeDatesFromYearStart(year);
+
+    return Object.entries(_.groupBy(fromYearStart, c => c.month)).map(entry => {
+      const key = entry[0];
+      const values = entry[1];
+      
+      return {
+        month: key,
+        days: values.map(day => {
+          return {
+            id: day.id,
+            date: day.date,
+            day_of_week: day.day_of_week,
+            month:  day.month,
+            disabled: day.disabled,
+            parsed_date: day.parsed_date,
+            passed_or_today: moment(day.date).isAfter(today)
+          }
+        })
+      }
+    });
+  }, [year]);
 
   function defineHabitdayParams(weekDay: WeekDaysHabitsResponse) {
     const amount = weekDay.amount ?? 0;
@@ -58,13 +81,10 @@ export function Summary() {
 
   function fetchData() {
     reloadUser?.();
-    const fromYearStart = generateRangeDatesFromYearStart(year);
-
-    setDatesFromYearStart(fromYearStart);
-    setAmountOfDaysToFill(minimunSummaryDatesSizes - fromYearStart.length)
 
     api.get(`/summary?year=${year}&user_id=${user?.id}`).then(response => {
       setWeekDaysHabits(response.data);
+      console.log(response.data);
     })
   }
 
@@ -98,42 +118,38 @@ export function Summary() {
       >
         <View className='flex-row flex-wrap'>
           {
-            datesFromYearStart.map(date => {
-              const dayHabit = weekDaysHabits.find(dia => {
-                const parsed = moment(dia.date).tz(timezone).format('YYYYMMDD');
-                const dateParsed = moment(date.date).tz(timezone).format('YYYYMMDD');
+            datesFromYearStart.map(month => {
+                return (
+                  <View key={month.month} className='w-full'>
+                    <Text className={clsx("text-xl text-zinc-900 font-bold mt-2 mb-2", {
+                      'text-white': dark
+                    })}>
+                      {month.month}
+                    </Text>
 
-                return parsed === dateParsed;
-              })
-
-              return (
-                <HabitDay 
-                  key={date.date} 
-                  amount={dayHabit?.amount ?? 0}
-                  completed={dayHabit?.completed ?? 0}
-                  date={date.date}
-                  disabled={date.disabled}
-                  dark={dark}
-                  onPress={() => navigate('habit', defineHabitdayParams(dayHabit ?? date))}
-                />
-              )
-            })
-          }
-
-          {
-            amountOfDaysToFill > 0 && Array
-            .from({ length: amountOfDaysToFill })
-            .map((__, index) => {
-              return (
-                <View 
-                  key={index}
-                  className={clsx("bg-zinc-300 rounded-lg m-1", {
-                    'bg-zinc-900 opacity-40': dark
-                  })}
-                  style={{ width: DAY_SIZE, height: DAY_SIZE }}
-                />
-              )
-            })
+                    <View className='flex-row flex-wrap'>
+                      {
+                        month.days.map(date => {
+                          const dayHabit = weekDaysHabits.find(dia => dia.date_parsed === date.parsed_date)
+                  
+                          return (
+                            <HabitDay 
+                              key={String(Math.random())} 
+                              amount={dayHabit?.amount ?? 0}
+                              completed={dayHabit?.completed ?? 0}
+                              date={date.date.toISOString()}
+                              disabled={date.disabled || date.passed_or_today}
+                              dark={dark}
+                              onPress={() => navigate('habit', defineHabitdayParams(dayHabit ?? date))}
+                            />
+                          )
+                        })
+                      }
+                    </View>
+                  </View>
+                );
+              }
+            )
           }
         </View>
       </ScrollView>
