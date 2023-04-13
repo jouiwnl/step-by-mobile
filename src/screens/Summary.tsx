@@ -3,9 +3,9 @@ import _ from 'lodash';
 import clsx from 'clsx';
 
 import { Text, View, ScrollView } from 'react-native';
-import { JSXElementConstructor, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
-import { generateRangeDatesFromYearStart } from '../utils/dateUtils';
+import { generateRangeDatesFromYearStart, months } from '../utils/dateUtils';
 
 import { Header } from '../components/Header';
 import { HabitDay, DAY_SIZE } from '../components/HabitDay';
@@ -14,12 +14,10 @@ import { useState, useMemo } from 'react';
 import { api } from '../lib/api';
 import { AuthContext } from '../contexts/Auth';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
-import { timezone } from '../lib/localization';
-import { useFrameCallback } from 'react-native-reanimated';
 
 const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-interface WeekDaysHabitsResponse {
+export interface WeekDaysHabitsResponse {
   id: string;
   date: Date;
   completed?: number;
@@ -48,11 +46,42 @@ export function Summary() {
     const fromYearStart = generateRangeDatesFromYearStart(year);
 
     return Object.entries(_.groupBy(fromYearStart, c => c.month)).map(entry => {
-      const key = entry[0];
-      const values = entry[1];
+      const month = entry[0];
+      const values: any[] = entry[1];
+
+      const monthNumber = months.find(m => m.description === month);
+
+      if (!monthNumber) {
+        return;
+      }
+
+      const monthString = String(monthNumber.id + 1).padStart(2, '0');
+      const firstDayOfMonth = moment(`${year}-${monthString}-01`);
+      const weekDayOfFirstDay = firstDayOfMonth.get('day');
+
+      const weekDaysByStartDate = Array.from({ length: weekDayOfFirstDay })
+        .map((_, index) => {
+          return {
+            index: index,
+            day_of_week: index + 1
+          }
+        });
+
+      weekDaysByStartDate.forEach(day => {
+        const newDate = firstDayOfMonth.subtract(day.day_of_week, 'day');
+    
+        values.unshift({
+          id: "nulo",
+          date: null,
+          day_of_week: newDate.get('day'),
+          month,
+          parsed_date: null,
+          disabled: true
+        })
+      })
       
       return {
-        month: key,
+        month,
         days: values.map(day => {
           return {
             id: day.id,
@@ -84,7 +113,6 @@ export function Summary() {
 
     api.get(`/summary?year=${year}&user_id=${user?.id}`).then(response => {
       setWeekDaysHabits(response.data);
-      console.log(response.data);
     })
   }
 
@@ -120,16 +148,16 @@ export function Summary() {
           {
             datesFromYearStart.map(month => {
                 return (
-                  <View key={month.month} className='w-full'>
+                  <View key={month?.month} className='w-full'>
                     <Text className={clsx("text-xl text-zinc-900 font-bold mt-2 mb-2", {
                       'text-white': dark
                     })}>
-                      {month.month}
+                      {month?.month}
                     </Text>
 
                     <View className='flex-row flex-wrap'>
                       {
-                        month.days.map(date => {
+                        month?.days.map(date => {
                           const dayHabit = weekDaysHabits.find(dia => dia.date_parsed === date.parsed_date)
                   
                           return (
@@ -137,7 +165,7 @@ export function Summary() {
                               key={String(Math.random())} 
                               amount={dayHabit?.amount ?? 0}
                               completed={dayHabit?.completed ?? 0}
-                              date={date.date.toISOString()}
+                              date={date?.date?.toISOString()}
                               disabled={date.disabled || date.passed_or_today}
                               dark={dark}
                               onPress={() => navigate('habit', defineHabitdayParams(dayHabit ?? date))}

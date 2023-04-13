@@ -15,7 +15,7 @@ interface props {
   onPress?: () => void;
   amount: number;
   completed: number;
-  date: string;
+  date?: string;
   disabled: boolean;
   dark?: boolean;
 }
@@ -26,7 +26,7 @@ export function HabitDay(props: props) {
 
   const progress = Math.round((props.completed/props.amount) * 100);
   const today = moment().startOf('D');
-  const isCurrentDay = moment(props.date).startOf('D').isSame(today);
+  const isCurrentDay = props.date && moment(props.date).startOf('D').isSame(today);
 
   const haveCustomColors = !!user!.color;
 

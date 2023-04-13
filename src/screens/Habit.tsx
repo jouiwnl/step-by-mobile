@@ -27,7 +27,7 @@ interface HabitResponse {
   checked?: boolean;
 }
 
-interface DayResponse {
+export interface DayResponse {
   id: string;
   date: string;
   possibleHabits: HabitResponse[];
@@ -40,6 +40,8 @@ export function Habit() {
   const { date } = route.params as RouteParams;
 
   const parsedDate = moment(date).tz(timezone);
+
+  console.log(parsedDate);
 
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');

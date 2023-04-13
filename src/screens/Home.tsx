@@ -1,15 +1,20 @@
-import colors from "tailwindcss/colors";
-import moment from 'moment-timezone';
-
-import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
-import { Feather } from '@expo/vector-icons';
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import { useState, useEffect, useContext, useCallback } from "react";
-import { api } from "../lib/api";
-import { Loading } from "../components/Loading";
-import { AuthContext } from "../contexts/Auth";
-import { registerForPushNotification } from "../notification/notification";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ScreenThemeContext } from "../contexts/ScreenTheme";
+
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { api } from "../lib/api";
+import { DayResponse } from "./Habit";
+import { timezone } from "../lib/localization";
+import { AuthContext } from "../contexts/Auth";
+import { AxiosError } from "axios";
+
+import { Feather } from '@expo/vector-icons';
+import { registerForPushNotification } from "../notification/notification";
+import { Loading } from "../components/Loading";
+
+import colors from "tailwindcss/colors";
+import moment from "moment-timezone";
 import clsx from "clsx";
 
 interface YearResponse {
@@ -18,6 +23,10 @@ interface YearResponse {
 }
 
 export function Home() {
+  const [years, setYears] = useState<YearResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasCompletedToday, setHasCompletedToday] = useState(false);
+  const [hasHabits, setHasHabits] = useState(false);
 
   const navigation = useNavigation<any>();
   const { navigate } = navigation;
@@ -25,17 +34,35 @@ export function Home() {
 
   const currentYear = moment().year();
 
-  const { signOutNow, user } = useContext(AuthContext);
   const { dark, handleDarkMode } = useContext(ScreenThemeContext);
+  const { user, signOutNow } = useContext(AuthContext);
+  const today = moment().startOf('day').tz(timezone);
 
-  const [years, setYears] = useState<YearResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  function defineHabitdayParams() {
+    return { 
+      date: today.toISOString()
+    }
+  }
 
+  function handleSignOut() {
+    signOutNow?.().then(() => {
+      navigate('login')
+    })
+  }
 
-  async function fetchData() {
-    setLoading(true);
+  async function fetchToday() {
+    return api.get<DayResponse>(`/day?date=${today.toISOString()}&user_id=${user?.id}`).then(response => {
+      const habits = response.data.possibleHabits;
+      const completed = response.data.completedHabits ?? [];
 
-    api.get<YearResponse[]>(`/years?user_id=${user?.id}`).then(response => {
+      setHasCompletedToday(habits.length === completed.length);
+      setHasHabits(!!habits.length);
+    })
+    .catch((err: AxiosError) => console.log(err.response));
+  }
+
+  async function fetchYears() {
+    return api.get<YearResponse[]>(`/years?user_id=${user?.id}`).then(response => {
       const years = response.data;
       const hasCurrentYear = years.find(y => y.year_number === currentYear);
 
@@ -44,7 +71,6 @@ export function Home() {
       }
 
       setYears(response.data);
-      setLoading(false);
     })
     .then(() => {
       registerForPushNotification().then(token => {
@@ -63,18 +89,20 @@ export function Home() {
     });
   }
 
+  async function fetchData() {
+    setLoading(true);
+
+    const promises = [fetchToday(), fetchYears()];
+
+    await Promise.all(promises).finally(() => setLoading(false))
+  }
+
   function createYearIfNotExists() { 
     api.post('/years', { year_number: currentYear, user_id: user?.id })
       .then(fetchData)
       .catch(err => {
         console.log(err);
       });
-  }
-
-  function handleSignOut() {
-    signOutNow?.().then(() => {
-      navigate('login')
-    })
   }
 
   useEffect(() => {
@@ -90,6 +118,8 @@ export function Home() {
   }, [user?.id])
 
   useFocusEffect(useCallback(() => {
+    fetchToday();
+
     if (!params?.reload) {
       return;
     }
@@ -157,9 +187,27 @@ export function Home() {
         </View>
       </View>
 
+      { hasHabits && (
+        <View className="w-full mt-5 items-center">
+          { hasCompletedToday ? (
+            <Text className="text-green-400 font-semibold">
+              ✓ You've completed all habits today!
+            </Text>
+          ) : (
+            <TouchableOpacity 
+              onPress={() => navigate('habit', defineHabitdayParams())}
+            >
+              <Text className="text-zinc-400 font-semibold">
+                ⚠️ {`Complete your habits today ->`}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ) }
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100, paddingTop: 30 }}
+        contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}
       >
         {
           loading ? (
@@ -191,7 +239,6 @@ export function Home() {
           )
         }
       </ScrollView>
-      
     </View>
   )
 }

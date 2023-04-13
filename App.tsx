@@ -42,7 +42,7 @@ export default function App() {
     setTimeout(async () => {
       await SplashScreen.hideAsync();
     }, 1500)
-  }, [user])
+  }, [user?.email])
 
   if (!fontsLoaded || !stateChanged) {
     return (

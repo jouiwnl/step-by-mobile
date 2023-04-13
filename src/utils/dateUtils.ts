@@ -39,7 +39,7 @@ function generateRangeDatesFromYearStart(year: number) {
       id: compareDate.toISOString(),
       date: compareDate.toDate(),
       day_of_week: compareDate.get('day'),
-      month:  months.find(m => m.id === compareDate.get('month'))?.description,
+      month: months.find(m => m.id === compareDate.get('month'))?.description,
       parsed_date: compareDate.format('YYYYMMDD'),
       disabled: false
     })

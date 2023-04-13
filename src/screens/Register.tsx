@@ -5,8 +5,6 @@ import { SaveButton } from '../components/SaveButton';
 
 import { useContext, useState } from 'react';
 import { BackButton } from '../components/BackButton';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase';
 import { useNavigation } from '@react-navigation/native';
 import { isValidEmail } from '../utils/stringUtils';
 import { AuthContext } from '../contexts/Auth';

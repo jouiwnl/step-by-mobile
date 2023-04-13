@@ -12,9 +12,10 @@ interface SaveButtonProps {
   isDisabled: boolean;
   text?: string;
   height?: number;
+  showIcon?: boolean;
 }
 
-export function SaveButton({ isDisabled, save, saving, text, height }: SaveButtonProps) {
+export function SaveButton({ isDisabled, save, saving, text, height, showIcon = true }: SaveButtonProps) {
   const { user } = useContext(AuthContext);
 
 	function defineBackgroudColor() {
@@ -38,11 +39,13 @@ export function SaveButton({ isDisabled, save, saving, text, height }: SaveButto
           <Loading />
         ) : (
           <>
-            <Feather 
-              name="check"
-              size={20}
-              color={colors.white}
-            />
+            { showIcon && (
+              <Feather 
+                name="check"
+                size={20}
+                color={colors.white}
+              />
+            )}
 
             <Text className="font-semibold text-base text-white ml-2">
               {text ?? 'Confirm'}
