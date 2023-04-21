@@ -41,8 +41,6 @@ export function Habit() {
 
   const parsedDate = moment(date).tz(timezone);
 
-  console.log(parsedDate);
-
   const dayOfWeek = parsedDate.format('dddd');
   const dayAndMonth = parsedDate.format('DD/MM');
 

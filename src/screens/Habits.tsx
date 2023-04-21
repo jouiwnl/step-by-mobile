@@ -22,6 +22,8 @@ interface HabitResponse {
   activation_date: Date;
   deactivation_date: Date;
   disabled: string;
+  type: "SPECIFIC_DATE" | "WEEKLY";
+  habit_date: string;
 }
 
 interface HabitRoute {
@@ -51,6 +53,7 @@ export function Habits() {
 
 		api.get<HabitResponse[]>(`/habits?year=${year}&user_id=${user?.id}`).then(response => {
 			setHabits(response.data);
+      console.log(response.data)
 		})
     .finally(() => setLoading(false))
 	}
@@ -163,14 +166,22 @@ export function Habits() {
 
                         <View className="flex-row items-center flex-wrap">
                           {
-                            week.filter(dia => habit.weekdays?.split(',').includes(String(dia.id)))
-                              .map((dia, index, { length }) => (
-                                <Text key={dia.id} className={clsx("text-zinc-900 text-xs font-normal mt-2 opacity-70", {
-                                  'text-white': dark
-                                })}>
-                                  {dia.description}{  index + 1 === length ? '.' : ', '}
-                                </Text>
-                              ))
+                            habit.type === "WEEKLY" ? (
+                              week.filter(dia => habit.weekdays?.split(',').includes(String(dia.id)))
+                                .map((dia, index, { length }) => (
+                                  <Text key={dia.id} className={clsx("text-zinc-900 text-xs font-normal mt-2 opacity-70", {
+                                    'text-white': dark
+                                  })}>
+                                    {dia.description}{  index + 1 === length ? '.' : ', '}
+                                  </Text>
+                                ))
+                            ) : (
+                              <Text className={clsx("text-zinc-900 text-xs font-normal mt-2 opacity-70", {
+                                'text-white': dark
+                              })}>
+                                Event only available in {moment(habit.habit_date).format('YYYY-MM-DD')}
+                              </Text>
+                            )
                           }
                         </View>
 											</TouchableOpacity>

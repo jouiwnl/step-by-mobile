@@ -9,12 +9,24 @@ import { SaveButton } from '../components/SaveButton';
 import Input from '../components/Input';
 import { AuthContext } from '../contexts/Auth';
 import { week } from '../utils/dateUtils';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import moment from 'moment-timezone';
 import clsx from 'clsx';
 import { ScreenThemeContext } from '../contexts/ScreenTheme';
 
 const isAndroid = Platform.OS === 'android';
+
+const HABIT_TYPES: { id: "SPECIFIC_DATE" | "WEEKLY" | undefined, description: string }[] = [
+  {
+    id: "SPECIFIC_DATE",
+    description: "Specific Date" 
+  },
+  {
+    id: "WEEKLY",
+    description: "Weekly"
+  }
+]
 
 interface RouteParams {
   habit_id?: string; 
@@ -24,7 +36,9 @@ interface RouteParams {
 interface HabitResponse {
   id: string;
   title: string;
-  weekDays: any[]
+  weekDays: any[];
+  type: "SPECIFIC_DATE" | "WEEKLY" | undefined;
+  habit_date: string;
 }
 
 interface HabitRequest {
@@ -32,6 +46,8 @@ interface HabitRequest {
   weekDays: Number[];
   created_at?: string;
   user_id?: string;
+  type: "SPECIFIC_DATE" | "WEEKLY" | undefined;
+  habit_date: string | undefined;
 }
 
 export function New() {
@@ -47,6 +63,8 @@ export function New() {
 
   const [weekDays, setWeekDays] = useState<Number[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [habitType, setHabitType] = useState<"WEEKLY" | "SPECIFIC_DATE" | undefined>();
+  const [habitDate, setHabitDate] = useState<string>(today);
   const [saving, setSaving] = useState<boolean>(false); 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -74,6 +92,8 @@ export function New() {
       })
 
       setTitle(response.data.title);
+      setHabitType(response.data.type);
+      setHabitDate(response.data.habit_date);
     })
     .finally(() => setLoading(false))
   }
@@ -85,7 +105,9 @@ export function New() {
       title,
       weekDays,
       created_at: today + "T03:00:00.000z",
-      user_id: user?.id
+      user_id: user?.id,
+      type: habitType,
+      habit_date: habitType === 'WEEKLY' ? undefined : moment(habitDate).format('YYYY-MM-DD') + "T03:00:00.000z"
     }
 
     if (habit_id) {
@@ -152,29 +174,62 @@ export function New() {
                 text={title}
               />
 
-              <Text className={clsx("font-semibold mt-4 mb-3 text-zinc-900 text-base", {
-                'text-white': dark
-              })}>
-                What is the recurrence?
-              </Text>
+              <View className="flex-row justify-between mt-6">
+                {
+                  HABIT_TYPES.map((type, index) => (
+                    <Checkbox 
+                      key={index}
+                      title={type.description}
+                      checked={type.id === habitType}
+                      onPress={() => setHabitType(type.id)}
+                      dark={dark}
+                      disabled={false}
+                    />
+                  ))
+                }
+              </View>
 
-              {week.map((day, index) => {
-                return (
-                  <Checkbox 
-                    key={index}
-                    title={day.description}
-                    checked={weekDays.includes(index)}
-                    onPress={() => handleWeekDay(index)}
-                    dark={dark}
-                    disabled={false}
-                  />
+              {
+                habitType === 'SPECIFIC_DATE' ? (
+                  <View>
+                    <DateTimePicker 
+                      value={new Date(habitDate)} 
+                      onChange={(_, date) => { setHabitDate(moment(date).format('YYYY-MM-DD')) }}
+                      mode='date'
+                      display="spinner"
+                      minimumDate={new Date()}
+                      maximumDate={moment(new Date()).endOf('year').toDate()}
+                      themeVariant={dark ? 'dark' : 'light'}
+                    />
+                  </View>
+                ) : (
+                  <>
+                    <Text className={clsx("font-semibold mt-4 mb-3 text-zinc-900 text-base", {
+                      'text-white': dark
+                    })}>
+                      What is the recurrence?
+                    </Text>
+
+                    {week.map((day, index) => {
+                      return (
+                        <Checkbox 
+                          key={index}
+                          title={day.description}
+                          checked={weekDays.includes(index)}
+                          onPress={() => handleWeekDay(index)}
+                          dark={dark}
+                          disabled={false}
+                        />
+                      )
+                    })}
+                  </>
                 )
-              })}
+              }
 
               <SaveButton 
                 save={save}
                 saving={saving}
-                isDisabled={!title}
+                isDisabled={!title || !habitType}
               />
             </>
           )

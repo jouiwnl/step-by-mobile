@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Feather } from '@expo/vector-icons'
 import colors from "tailwindcss/colors";
 import clsx from "clsx";
-import Animated, { RotateInDownLeft, RotateInDownRight } from "react-native-reanimated";
+import Animated, { RotateInDownLeft } from "react-native-reanimated";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/Auth";
 

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ScreenThemeContext } from "../contexts/ScreenTheme";
 
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
@@ -118,7 +118,9 @@ export function Home() {
   }, [user?.id])
 
   useFocusEffect(useCallback(() => {
-    fetchToday();
+    if (user?.id) {
+      fetchToday();
+    }
 
     if (!params?.reload) {
       return;
@@ -127,7 +129,7 @@ export function Home() {
     params.reload = false;
 
     fetchData()
-  }, [params?.reload]))
+  }, [params?.reload, user?.id]))
 
   return (
     <View className={clsx("flex-1 bg-slate-50 px-8 pt-16", { 
